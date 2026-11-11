@@ -14,6 +14,7 @@ export default function BarcodeScanner() {
   const [error, setError] = useState("");
   const [manual, setManual] = useState("");
   const [now, setNow] = useState<Date | null>(null);
+  const [reading, setReading] = useState(false);
 
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const lockRef = useRef(false);
@@ -77,11 +78,43 @@ export default function BarcodeScanner() {
     }
   }, []);
 
+  async function scanImage(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    setReading(true);
+    setError("");
+    const host = document.createElement("div");
+    host.id = "barcode-file-reader";
+    host.style.display = "none";
+    document.body.appendChild(host);
+    try {
+      const { Html5Qrcode: Scanner } = await import("html5-qrcode");
+      const scanner = new Scanner("barcode-file-reader", false);
+      try {
+        const decoded = await scanner.scanFile(file, false);
+        await submitCode(decoded);
+      } finally {
+        try {
+          scanner.clear();
+        } catch {
+          // already cleared
+        }
+      }
+    } catch {
+      setError(
+        "مقدرتش أقرا الباركود من الصورة — جرّب تصوير أوضح وأقرب، أو امسح بالكاميرا مباشرة.",
+      );
+    } finally {
+      host.remove();
+      setReading(false);
+    }
+  }
+
   async function start() {
     if (starting || running) return;
     setStarting(true);
-    setError("");
-    try {
+    setError("");    try {
       const { Html5Qrcode: Scanner, Html5QrcodeSupportedFormats } = await import(
         "html5-qrcode"
       );
@@ -188,6 +221,25 @@ export default function BarcodeScanner() {
             </button>
           </form>
         </div>
+
+        <label className="mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-lime/25 bg-lime/[0.05] px-4 py-3 text-sm font-bold text-lime transition hover:bg-lime/[0.1]">
+          {reading ? (
+            <span className="size-4 animate-spin rounded-full border-2 border-lime/25 border-t-lime" />
+          ) : (
+            <IconScan className="size-5" />
+          )}
+          {reading ? "جاري قراءة الصورة…" : "صوّر الباركود بالكاميرا"}
+          <input
+            id="barcode-file"
+            type="file"
+            accept="image/*"
+            onChange={scanImage}
+            className="sr-only"
+          />
+        </label>
+        <p className="mt-2 text-center text-[11px] text-white/30">
+          لو المسح المباشر مش شغال، خد صورة للباركود والنظام هيقراها ويسجل الحضور.
+        </p>
 
         {error ? (
           <p className="mt-3 rounded-2xl border border-rose-400/25 bg-rose-500/[0.07] px-4 py-3 text-xs leading-6 text-rose-200">
