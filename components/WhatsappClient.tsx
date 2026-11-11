@@ -366,7 +366,7 @@ export default function WhatsappClient({ initial }: { initial: WhatsappStatus })
                 كارت العضو.
               </p>
               <div className="mt-4 grid gap-2">
-                <label className="text-xs font-semibold text-white/55">جرّب الإرسال على رقم</label>
+                <label className="text-xs font-semibold text-white/55">أرسل رسالة على رقم</label>
                 <div className="flex gap-2">
                   <input
                     value={testPhone}
@@ -383,7 +383,7 @@ export default function WhatsappClient({ initial }: { initial: WhatsappStatus })
                     className="flex shrink-0 items-center gap-2 rounded-xl bg-lime px-4 py-2.5 text-xs font-extrabold text-ink transition hover:brightness-105 disabled:opacity-60"
                   >
                     {testing ? <Spinner light /> : <IconWhatsApp className="size-4" />}
-                    إرسال تجربة
+                    إرسال رسالة
                   </button>
                 </div>
               </div>

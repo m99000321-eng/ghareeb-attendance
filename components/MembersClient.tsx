@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { enrollFingerprint } from "@/lib/enroll";
 import type { Role, SafeMember, Sport } from "@/lib/types";
 import {
   IconArrowLeft,
@@ -147,25 +146,6 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
         "ok",
         `${data.kind === "image" ? "تم إرسال صورة الباركود" : "تم إرسال الباركود"} على واتساب ${phone}`,
       );
-    } catch (error) {
-      notify("err", (error as Error).message);
-    } finally {
-      setBusy(null);
-    }
-  }
-
-  async function enroll(member: SafeMember) {
-    setBusy(`enroll:${member.id}`);
-    try {
-      await enrollFingerprint(member.id);
-      setMembers((current) =>
-        current.map((item) =>
-          item.id === member.id
-            ? { ...item, enrolled: true, credentialAt: new Date().toISOString() }
-            : item,
-        ),
-      );
-      notify("ok", `تم تسجيل بصمة ${member.name} بنجاح`);
     } catch (error) {
       notify("err", (error as Error).message);
     } finally {
@@ -326,22 +306,6 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
               </div>
 
               <div className="mt-4 flex gap-2">
-                <button
-                  onClick={() => enroll(member)}
-                  disabled={member.enrolled || busy === `enroll:${member.id}`}
-                  className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-[12px] font-bold transition ${
-                    member.enrolled
-                      ? "cursor-default border border-lime/15 bg-lime/[0.04] text-lime/45"
-                      : "border border-lime/30 bg-lime/[0.08] text-lime hover:bg-lime/[0.15]"
-                  }`}
-                >
-                  {busy === `enroll:${member.id}` ? (
-                    <Spinner />
-                  ) : (
-                    <IconFingerprint className="size-4" />
-                  )}
-                  {member.enrolled ? "بصمة مسجلة" : "تسجيل البصمة"}
-                </button>
                 <button
                   onClick={() => checkIn(member)}
                   disabled={busy === `checkin:${member.id}`}
