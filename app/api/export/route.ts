@@ -1,6 +1,6 @@
 import * as XLSX from "xlsx";
 import { dayKey, getDB, timeArabic } from "@/lib/db";
-import { percent } from "@/lib/format";
+import { TIER_PRICE, monthKey, percent } from "@/lib/format";
 import { denyApi, isApiAuthorized } from "@/lib/guard";
 
 export const dynamic = "force-dynamic";
@@ -40,6 +40,21 @@ export async function GET(request: Request) {
   const sportOf = (id: string) => members.get(id)?.sport ?? "";
   const inMonth = (iso: string) => !month || dayKey(iso).startsWith(month);
   const inGroup = (id: string) => !group || groupOf(id) === group;
+
+  if (type === "subscriptions-template") {
+    const targetMonth = month || monthKey();
+    const rows = db.members.map((member) => ({
+      العضو: member.name,
+      المجموعة: member.group ?? "",
+      الفئة: member.tier === "senior" ? "كبار" : "صغار",
+      الشهر: targetMonth,
+      المبلغ: TIER_PRICE[member.tier ?? "junior"],
+      الحالة: "",
+      "تاريخ الدفع": "",
+      ملاحظات: "",
+    }));
+    return workbookResponse(rows, "الاشتراكات", `subscriptions-template-${targetMonth}.xlsx`);
+  }
 
   if (type === "subscriptions") {
     const rows = db.subscriptions

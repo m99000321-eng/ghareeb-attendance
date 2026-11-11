@@ -139,6 +139,16 @@ export function IconDownload({ className }: IconProps) {
   );
 }
 
+export function IconUpload({ className }: IconProps) {
+  return (
+    <svg {...base(className)}>
+      <path d="M12 20V9" />
+      <path d="m7.5 13.5 4.5-4.5 4.5 4.5" />
+      <path d="M5 4h14" />
+    </svg>
+  );
+}
+
 export function IconSpark({ className }: IconProps) {
   return (
     <svg {...base(className)}>

@@ -4,7 +4,14 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { SafeMember, Subscription } from "@/lib/types";
 import { TIER_LABEL, TIER_PRICE, money, monthLabel } from "@/lib/format";
-import { IconCheck, IconDownload, IconTrash, IconWallet, IconX } from "./Icons";
+import { IconCheck, IconDownload, IconTrash, IconUpload, IconWallet, IconX } from "./Icons";
+
+type ImportReport = {
+  created: number;
+  updated: number;
+  skipped: { row: number; name: string; reason: string }[];
+  unpaid: { name: string; amount: number }[];
+};
 
 function Spinner() {
   return (
@@ -25,6 +32,8 @@ export default function SubscriptionsClient({
   const [rows, setRows] = useState(subscriptions);
   const [busy, setBusy] = useState<string | null>(null);
   const [toast, setToast] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+  const [importing, setImporting] = useState(false);
+  const [report, setReport] = useState<ImportReport | null>(null);
 
   const byMember = useMemo(
     () => new Map(rows.filter((item) => item.month === month).map((item) => [item.memberId, item])),
@@ -43,9 +52,51 @@ export default function SubscriptionsClient({
     return { expected, collected, remaining: expected - collected };
   }, [members, byMember]);
 
+  const unpaid = useMemo(
+    () =>
+      members
+        .map((member) => ({ member, record: byMember.get(member.id) }))
+        .filter((item) => item.record && !item.record.paid),
+    [members, byMember],
+  );
+
   function notify(kind: "ok" | "err", text: string) {
     setToast({ kind, text });
     setTimeout(() => setToast(null), 4000);
+  }
+
+  async function importExcel(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    setImporting(true);
+    setReport(null);
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      body.append("month", month);
+      const response = await fetch("/api/subscriptions/import", { method: "POST", body });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error ?? "تعذر استيراد الملف");
+      setReport({
+        created: data.created ?? 0,
+        updated: data.updated ?? 0,
+        skipped: data.skipped ?? [],
+        unpaid: data.unpaid ?? [],
+      });
+      if (Array.isArray(data.subscriptions)) {
+        setRows(data.subscriptions as Subscription[]);
+      }
+      notify(
+        "ok",
+        `تم الاستيراد — تحديث ${data.updated ?? 0} وإنشاء ${data.created ?? 0} اشتراك`,
+      );
+      router.refresh();
+    } catch (error) {
+      notify("err", (error as Error).message);
+    } finally {
+      setImporting(false);
+    }
   }
 
   async function save(member: SafeMember, amount: number) {
@@ -126,6 +177,28 @@ export default function SubscriptionsClient({
             onChange={(event) => router.push(`/subscriptions?month=${event.target.value}`)}
             className="rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 text-sm outline-none focus:border-lime/50"
           />
+          <label
+            className={`flex cursor-pointer items-center gap-2 rounded-xl border border-lime/30 bg-lime/[0.08] px-4 py-2.5 text-xs font-bold text-lime transition hover:bg-lime/[0.15] ${
+              importing ? "opacity-60" : ""
+            }`}
+          >
+            {importing ? <Spinner /> : <IconUpload className="size-4" />}
+            {importing ? "جاري الاستيراد…" : "استيراد Excel"}
+            <input
+              type="file"
+              accept=".xlsx,.xls,.csv"
+              className="sr-only"
+              onChange={importExcel}
+              disabled={importing}
+            />
+          </label>
+          <a
+            href={`/api/export?type=subscriptions-template&month=${month}`}
+            className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-xs font-semibold text-white/60 transition hover:border-white/25 hover:text-white"
+          >
+            <IconDownload className="size-4" />
+            قالب Excel
+          </a>
           <a
             href={`/api/export?type=subscriptions&month=${month}`}
             className="flex items-center gap-2 rounded-xl border border-lime/30 bg-lime/[0.08] px-4 py-2.5 text-xs font-bold text-lime transition hover:bg-lime/[0.15]"
@@ -154,6 +227,46 @@ export default function SubscriptionsClient({
           </p>
         </div>
       </div>
+
+      {unpaid.length > 0 ? (
+        <div className="anim-pop rounded-2xl border border-rose-400/30 bg-rose-500/[0.07] px-5 py-4">
+          <div className="flex flex-wrap items-center gap-2 text-sm font-bold text-rose-200">
+            <IconWallet className="size-4" />
+            {unpaid.length} عضو ما دفعش اشتراك {monthLabel(month)}
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {unpaid.map(({ member, record }) => (
+              <span
+                key={member.id}
+                className="rounded-full border border-rose-400/25 bg-black/20 px-3 py-1 text-[11px] text-rose-100/80"
+              >
+                {member.name} — {money(record?.amount ?? 0)}
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {report ? (
+        <div className="rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-4 text-xs">
+          <div className="flex flex-wrap items-center gap-4">
+            <span className="text-lime">تم تحديث {report.updated}</span>
+            <span className="text-lime">تم إنشاء {report.created}</span>
+            {report.skipped.length > 0 ? (
+              <span className="text-rose-300">{report.skipped.length} صف لم يُستورد</span>
+            ) : null}
+          </div>
+          {report.skipped.length > 0 ? (
+            <ul className="mt-2 space-y-1 text-rose-200/70">
+              {report.skipped.map((item) => (
+                <li key={`${item.row}-${item.name}`}>
+                  صف {item.row}: {item.name} — {item.reason}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+      ) : null}
 
       <section className="anim-fade-up delay-2 panel overflow-hidden">
         <div className="hidden grid-cols-[2fr_1.2fr_1fr_1fr_0.9fr] gap-3 border-b border-white/[0.05] bg-black/20 px-6 py-3 text-[10px] font-semibold tracking-wider text-white/30 md:grid">
