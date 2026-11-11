@@ -41,6 +41,7 @@ export default function WhatsappClient({ initial }: { initial: WhatsappStatus })
   const [qr, setQr] = useState<{ type: string; image?: string; message?: string } | null>(null);
   const [testPhone, setTestPhone] = useState("01114845463");
   const [testing, setTesting] = useState(false);
+  const [unlinking, setUnlinking] = useState(false);
   const [notice, setNotice] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
   const refresh = useCallback(async () => {
@@ -145,6 +146,28 @@ export default function WhatsappClient({ initial }: { initial: WhatsappStatus })
       setNotice({ kind: "err", text: (error as Error).message });
     } finally {
       setTesting(false);
+    }
+  }
+
+  async function unlinkPhone() {
+    if (
+      !window.confirm(
+        "هيتم فصل واتساب عن الرقم الحالي، والإرسال هيقف لحد ما تمسح QR من رقم الأكاديمية. نكمل؟",
+      )
+    )
+      return;
+    setUnlinking(true);
+    setNotice(null);
+    try {
+      const response = await fetch("/api/whatsapp/logout", { method: "POST" });
+      const data = (await response.json().catch(() => ({}))) as { error?: string };
+      if (!response.ok) throw new Error(data.error ?? "تعذر فصل الربط");
+      setNotice({ kind: "ok", text: "تم فصل الرقم — امسح الـQR اللي هيظهر من موبايل الأكاديمية" });
+      await refresh();
+    } catch (error) {
+      setNotice({ kind: "err", text: (error as Error).message });
+    } finally {
+      setUnlinking(false);
     }
   }
 
@@ -363,6 +386,25 @@ export default function WhatsappClient({ initial }: { initial: WhatsappStatus })
                     إرسال تجربة
                   </button>
                 </div>
+              </div>
+
+              <div className="mt-5 rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4">
+                <p className="text-[11px] font-semibold text-white/55">
+                  الرقم الحالي مرتبط على واتساب الشخصي؟
+                </p>
+                <p className="mt-1 text-[11px] leading-relaxed text-white/35">
+                  افصله واربط رقم الأكاديمية بدله — الرسائل هتتبعت من رقم الأكاديمية، وكل محادثاتك
+                  الشخصية تفضل بره النظام.
+                </p>
+                <button
+                  type="button"
+                  onClick={unlinkPhone}
+                  disabled={unlinking}
+                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-gold/30 bg-gold/[0.07] px-4 py-2.5 text-[11px] font-bold text-gold transition hover:bg-gold/[0.14] disabled:opacity-60"
+                >
+                  {unlinking ? <Spinner /> : null}
+                  فصل الربط عن الرقم الحالي
+                </button>
               </div>
             </section>
           ) : null}

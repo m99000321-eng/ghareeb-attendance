@@ -262,3 +262,17 @@ export async function sendWhatsApp(
     error: "الإرسال التلقائي غير مفعّل — أضف بيانات Green API أو WhatsApp Cloud API",
   };
 }
+
+export async function logoutGreen(): Promise<boolean> {
+  const creds = await getGreenCreds();
+  if (!creds) return false;
+  try {
+    const response = await fetch(
+      `${GREEN_BASE}/waInstance${creds.instanceId}/logout/${creds.token}`,
+      { cache: "no-store" },
+    );
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
