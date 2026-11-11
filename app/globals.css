@@ -139,3 +139,171 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
+/* ---- printable member card (85.6mm x 54mm, credit-card size) ---- */
+.card-sheet {
+  padding: 4px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.16);
+}
+
+.member-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 340px;
+  height: 214px;
+  padding: 14px 16px;
+  overflow: hidden;
+  border-radius: 12px;
+  color: #f2f4f7;
+  background:
+    radial-gradient(220px 120px at 100% 0%, rgba(200, 255, 46, 0.16), transparent 65%),
+    linear-gradient(145deg, #10131c, #05060a);
+  border: 1px solid rgba(217, 180, 91, 0.35);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.member-card__glow {
+  position: absolute;
+  inset-inline-start: -40px;
+  bottom: -60px;
+  width: 140px;
+  height: 140px;
+  border-radius: 999px;
+  background: rgba(139, 92, 246, 0.18);
+  filter: blur(28px);
+}
+
+.member-card__header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.member-card__logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid rgba(217, 180, 91, 0.35);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.member-card__brand {
+  flex: 1;
+  line-height: 1.15;
+}
+
+.member-card__brand-ar {
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.member-card__brand-en {
+  font-size: 7px;
+  letter-spacing: 0.22em;
+  color: rgba(217, 180, 91, 0.8);
+}
+
+.member-card__role {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 700;
+  color: #c8ff2e;
+  background: rgba(200, 255, 46, 0.1);
+  border: 1px solid rgba(200, 255, 46, 0.25);
+}
+
+.member-card__body {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.member-card__name {
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 230px;
+}
+
+.member-card__meta {
+  margin-top: 2px;
+  font-size: 10px;
+  color: rgba(242, 244, 247, 0.55);
+}
+
+.member-card__avatar {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 800;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.member-card__barcode {
+  position: relative;
+  margin-top: auto;
+  padding: 5px 8px 3px;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.member-card__barcode svg {
+  display: block;
+}
+
+.member-card__code {
+  margin-top: 1px;
+  text-align: center;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  color: #222;
+}
+
+@media print {
+  @page {
+    size: auto;
+    margin: 10mm;
+  }
+  html,
+  body {
+    background: #ffffff !important;
+  }
+  body * {
+    visibility: hidden !important;
+  }
+  .card-sheet,
+  .card-sheet * {
+    visibility: visible !important;
+  }
+  .card-sheet {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

@@ -2,12 +2,16 @@ import Link from "next/link";
 import Shell from "@/components/Shell";
 import LiveClock from "@/components/LiveClock";
 import {
+  IconBell,
   IconCalendar,
+  IconChart,
   IconCheck,
   IconFingerprint,
+  IconScan,
   IconShield,
   IconSpark,
   IconUsers,
+  IconWallet,
 } from "@/components/Icons";
 import { dayKey, getDB, timeArabic, todayKey } from "@/lib/db";
 import { requireSession } from "@/lib/guard";
@@ -106,11 +110,18 @@ export default async function DashboardPage() {
           <div className="flex items-center gap-5">
             <LiveClock />
             <Link
+              href="/scan"
+              className="hidden items-center gap-2 rounded-2xl border border-lime/30 bg-lime/[0.08] px-5 py-3.5 text-sm font-bold text-lime transition hover:bg-lime/[0.15] md:flex"
+            >
+              <IconScan className="size-5" />
+              حضور بالباركود
+            </Link>
+            <Link
               href="/kiosk"
               className="hidden items-center gap-2 rounded-2xl bg-lime px-5 py-3.5 text-sm font-extrabold text-ink lime-glow transition hover:brightness-105 md:flex"
             >
               <IconFingerprint className="size-5" />
-              افتح شاشة البصمة
+              شاشة البصمة
             </Link>
           </div>
         </div>
@@ -143,6 +154,49 @@ export default async function DashboardPage() {
             icon={<IconFingerprint className="size-5" />}
             accent="cyan"
           />
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            {
+              href: "/scan",
+              label: "الحضور بالباركود",
+              hint: "كاميرا الموبايل",
+              icon: <IconScan className="size-4" />,
+            },
+            {
+              href: "/subscriptions",
+              label: "الاشتراكات",
+              hint: "تحصيل الشهر",
+              icon: <IconWallet className="size-4" />,
+            },
+            {
+              href: "/announcements",
+              label: "تنبيهات واتساب",
+              hint: "إلغاء الحصص",
+              icon: <IconBell className="size-4" />,
+            },
+            {
+              href: "/reports",
+              label: "التقارير و Excel",
+              hint: "حضور وغياب",
+              icon: <IconChart className="size-4" />,
+            },
+          ].map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="panel panel-hover flex items-center gap-3 px-4 py-3.5"
+            >
+              <span className="grid size-9 place-items-center rounded-xl border border-lime/20 bg-lime/[0.07] text-lime">
+                {item.icon}
+              </span>
+              <span className="min-w-0">
+                <span className="block truncate text-[13px] font-bold">{item.label}</span>
+                <span className="block text-[10px] text-white/35">{item.hint}</span>
+              </span>
+            </Link>
+          ))}
         </div>
 
         <div className="grid gap-5 xl:grid-cols-[1.55fr_1fr]">
@@ -264,7 +318,11 @@ export default async function DashboardPage() {
                       </p>
                     </div>
                     <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[10px] text-white/45">
-                      {entry.method === "fingerprint" ? "بصمة" : "يدوي"}
+                      {entry.method === "fingerprint"
+                        ? "بصمة"
+                        : entry.method === "barcode"
+                          ? "باركود"
+                          : "يدوي"}
                     </span>
                     <span className="w-16 text-left text-xs tabular-nums text-white/50">
                       {timeArabic(entry.at)}

@@ -2,12 +2,24 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { IconCalendar, IconHome, IconUsers } from "./Icons";
+import {
+  IconBell,
+  IconCalendar,
+  IconChart,
+  IconHome,
+  IconUsers,
+  IconWallet,
+} from "./Icons";
 
 const items = [
   { href: "/", label: "لوحة التحكم", icon: IconHome },
   { href: "/members", label: "اللاعبون والمدربون", icon: IconUsers },
   { href: "/attendance", label: "سجل الحضور", icon: IconCalendar },
+  { href: "/subscriptions", label: "الاشتراكات", icon: IconWallet },
+  { href: "/expenses", label: "المصروفات", icon: IconWallet },
+  { href: "/grades", label: "الدرجات والمستوى", icon: IconChart },
+  { href: "/announcements", label: "التنبيهات", icon: IconBell },
+  { href: "/reports", label: "التقارير", icon: IconChart },
 ];
 
 export default function NavLinks({ mobile = false }: { mobile?: boolean }) {
@@ -40,7 +52,7 @@ export default function NavLinks({ mobile = false }: { mobile?: boolean }) {
   }
 
   return (
-    <nav className="flex flex-col gap-1.5">
+    <nav className="flex flex-col gap-1">
       {items.map((item) => {
         const active =
           item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
@@ -49,20 +61,20 @@ export default function NavLinks({ mobile = false }: { mobile?: boolean }) {
           <Link
             key={item.href}
             href={item.href}
-            className={`group flex items-center gap-3 rounded-2xl px-4 py-3 text-[15px] transition ${
+            className={`group flex items-center gap-3 rounded-2xl px-3.5 py-2.5 text-[14px] transition ${
               active
                 ? "bg-lime text-ink font-bold shadow-[0_14px_40px_-18px_rgba(200,255,46,0.8)]"
                 : "text-white/60 hover:bg-white/[0.06] hover:text-white"
             }`}
           >
             <span
-              className={`grid size-9 place-items-center rounded-xl border ${
+              className={`grid size-8 place-items-center rounded-xl border ${
                 active
                   ? "border-ink/15 bg-ink/10"
                   : "border-white/10 bg-white/[0.04] group-hover:border-white/20"
               }`}
             >
-              <Icon className="size-[18px]" />
+              <Icon className="size-4" />
             </span>
             {item.label}
           </Link>

@@ -14,6 +14,8 @@ export type Member = {
   role: Role;
   sport: Sport;
   phone: string;
+  parentPhone?: string;
+  group?: string;
   joinedAt: string;
   color: string;
   credential?: Credential;
@@ -23,7 +25,43 @@ export type Attendance = {
   id: string;
   memberId: string;
   at: string;
-  method: "fingerprint" | "manual";
+  method: "fingerprint" | "manual" | "barcode";
+};
+
+export type Subscription = {
+  id: string;
+  memberId: string;
+  month: string;
+  amount: number;
+  paid: boolean;
+  paidAt?: string;
+  note?: string;
+};
+
+export type Expense = {
+  id: string;
+  title: string;
+  amount: number;
+  category: string;
+  at: string;
+  note?: string;
+};
+
+export type Grade = {
+  id: string;
+  memberId: string;
+  title: string;
+  score: number;
+  max: number;
+  at: string;
+};
+
+export type Announcement = {
+  id: string;
+  title: string;
+  body: string;
+  group?: string;
+  at: string;
 };
 
 export type Challenge = {
@@ -36,6 +74,10 @@ export type DB = {
   members: Member[];
   attendance: Attendance[];
   challenges: Record<string, Challenge>;
+  subscriptions: Subscription[];
+  expenses: Expense[];
+  grades: Grade[];
+  announcements: Announcement[];
 };
 
 export type SafeMember = Omit<Member, "credential"> & {

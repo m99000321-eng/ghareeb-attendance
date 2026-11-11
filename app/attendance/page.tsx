@@ -7,6 +7,7 @@ import {
   IconCheck,
   IconClock,
   IconFingerprint,
+  IconScan,
   IconShield,
   IconUsers,
 } from "@/components/Icons";
@@ -18,18 +19,21 @@ export const dynamic = "force-dynamic";
 export default async function AttendancePage({
   searchParams,
 }: {
-  searchParams: Promise<{ date?: string }>;
+  searchParams: Promise<{ date?: string; group?: string }>;
 }) {
-  const { date } = await searchParams;
+  const { date, group: groupParam } = await searchParams;
   await requireSession();
   const selected = /^\d{4}-\d{2}-\d{2}$/.test(date ?? "") ? (date as string) : todayKey();
+  const group = groupParam?.trim() ?? "";
 
   const db = await getDB();
+  const groups = [...new Set(db.members.map((member) => member.group).filter(Boolean))] as string[];
+  const memberById = new Map(db.members.map((member) => [member.id, member]));
   const entries = db.attendance
     .filter((entry) => dayKey(entry.at) === selected)
+    .filter((entry) => !group || memberById.get(entry.memberId)?.group === group)
     .sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
 
-  const memberById = new Map(db.members.map((member) => [member.id, member]));
   const uniqueMembers = new Set(entries.map((entry) => entry.memberId));
   const coachesPresent = entries.filter(
     (entry) => memberById.get(entry.memberId)?.role === "coach",
@@ -46,7 +50,12 @@ export default async function AttendancePage({
       sport: member?.sport ?? "",
       color: member?.color ?? "#c8ff2e",
       time: timeArabic(entry.at),
-      method: entry.method === "fingerprint" ? "بصمة" : "يدوي",
+      method:
+        entry.method === "fingerprint"
+          ? "بصمة"
+          : entry.method === "barcode"
+            ? "باركود"
+            : "يدوي",
     };
   });
 
@@ -66,9 +75,12 @@ export default async function AttendancePage({
               ATTENDANCE LOG
             </p>
             <h1 className="text-[30px] font-extrabold leading-tight md:text-[38px]">سجل الحضور</h1>
-            <p className="mt-2 text-sm text-white/45">{displayDate}</p>
+            <p className="mt-2 text-sm text-white/45">
+              {displayDate}
+              {group ? ` — ${group}` : " — كل المجموعات"}
+            </p>
           </div>
-          <AttendanceTools date={selected} rows={rows} />
+          <AttendanceTools date={selected} group={group} groups={groups} rows={rows} />
         </div>
 
         <div className="grid gap-4 sm:grid-cols-3">
@@ -111,13 +123,22 @@ export default async function AttendancePage({
               <IconCalendar className="size-5 text-white/30" />
               <h2 className="text-base font-bold">تفاصيل اليوم</h2>
             </div>
-            <Link
-              href="/kiosk"
-              className="flex items-center gap-2 rounded-full bg-lime px-4 py-2 text-xs font-bold text-ink"
-            >
-              <IconFingerprint className="size-4" />
-              شاشة البصمة
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/scan"
+                className="flex items-center gap-2 rounded-full border border-lime/30 bg-lime/[0.08] px-4 py-2 text-xs font-bold text-lime transition hover:bg-lime/[0.15]"
+              >
+                <IconScan className="size-4" />
+                مسح باركود
+              </Link>
+              <Link
+                href="/kiosk"
+                className="flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-xs font-bold text-white/60 transition hover:border-white/25 hover:text-white"
+              >
+                <IconFingerprint className="size-4" />
+                شاشة البصمة
+              </Link>
+            </div>
           </div>
 
           <div className="hidden grid-cols-[2fr_1fr_1fr_1fr_0.5fr] gap-3 border-y border-white/[0.05] bg-black/20 px-6 py-3 text-[10px] font-semibold tracking-wider text-white/30 md:grid">
@@ -160,7 +181,9 @@ export default async function AttendancePage({
                     className={`w-fit rounded-full px-2.5 py-1 text-[10px] font-bold ${
                       row.method === "بصمة"
                         ? "bg-lime/10 text-lime"
-                        : "bg-white/[0.05] text-white/45"
+                        : row.method === "باركود"
+                          ? "bg-violet-400/10 text-violet-300"
+                          : "bg-white/[0.05] text-white/45"
                     }`}
                   >
                     {row.method}

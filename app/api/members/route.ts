@@ -20,6 +20,8 @@ export async function POST(request: Request) {
     role?: Role;
     sport?: Sport;
     phone?: string;
+    parentPhone?: string;
+    group?: string;
   };
 
   const name = body.name?.trim();
@@ -37,6 +39,8 @@ export async function POST(request: Request) {
     role,
     sport,
     phone: body.phone?.trim() ?? "",
+    parentPhone: body.parentPhone?.trim() ?? "",
+    group: body.group?.trim() ?? "",
     joinedAt: new Date().toISOString(),
     color: COLORS[db.members.length % COLORS.length],
   };

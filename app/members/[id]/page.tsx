@@ -5,6 +5,7 @@ import EnrollButton from "@/components/EnrollButton";
 import {
   IconArrowLeft,
   IconCalendar,
+  IconCard,
   IconCheck,
   IconClock,
   IconFingerprint,
@@ -82,6 +83,19 @@ export default async function MemberPage({
                   <span className="rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1 text-white/50">
                     {member.sport}
                   </span>
+                  {member.group ? (
+                    <span className="rounded-full border border-lime/20 bg-lime/[0.06] px-2.5 py-1 text-lime/80">
+                      {member.group}
+                    </span>
+                  ) : null}
+                  {member.parentPhone ? (
+                    <span
+                      dir="ltr"
+                      className="rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1 tabular-nums text-white/50"
+                    >
+                      ولي الأمر: {member.parentPhone}
+                    </span>
+                  ) : null}
                   {member.phone ? (
                     <span dir="ltr" className="rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1 tabular-nums text-white/50">
                       {member.phone}
@@ -90,13 +104,22 @@ export default async function MemberPage({
                 </div>
               </div>
             </div>
-            <p className="pb-2 text-[11px] text-white/35">
-              عضو منذ{" "}
-              {new Date(member.joinedAt).toLocaleDateString("ar-EG", {
-                month: "long",
-                year: "numeric",
-              })}
-            </p>
+            <div className="flex items-center gap-3 pb-2">
+              <p className="text-[11px] text-white/35">
+                عضو منذ{" "}
+                {new Date(member.joinedAt).toLocaleDateString("ar-EG", {
+                  month: "long",
+                  year: "numeric",
+                })}
+              </p>
+              <Link
+                href={`/members/${member.id}/card`}
+                className="flex items-center gap-2 rounded-xl border border-gold/30 bg-gold/[0.08] px-4 py-2 text-xs font-bold text-gold transition hover:bg-gold/[0.15]"
+              >
+                <IconCard className="size-4" />
+                كارت الباركود
+              </Link>
+            </div>
           </div>
         </section>
 
@@ -178,7 +201,11 @@ export default async function MemberPage({
                     <div className="flex-1">
                       <p className="text-sm font-semibold">{dateArabic(entry.at)}</p>
                       <p className="text-[10px] text-white/35">
-                        {entry.method === "fingerprint" ? "بصمة إصبع" : "تسجيل يدوي"}
+                        {entry.method === "fingerprint"
+                          ? "بصمة إصبع"
+                          : entry.method === "barcode"
+                            ? "باركود"
+                            : "تسجيل يدوي"}
                       </p>
                     </div>
                     <span className="flex items-center gap-1.5 text-xs tabular-nums text-white/50">

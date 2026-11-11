@@ -11,7 +11,15 @@ const useBlob = Boolean(
 );
 
 function seed(): DB {
-  return { members: [], attendance: [], challenges: {} };
+  return {
+    members: [],
+    attendance: [],
+    challenges: {},
+    subscriptions: [],
+    expenses: [],
+    grades: [],
+    announcements: [],
+  };
 }
 
 async function readRaw(): Promise<DB | null> {
@@ -33,6 +41,10 @@ export async function getDB(): Promise<DB> {
   db.members ??= [];
   db.attendance ??= [];
   db.challenges ??= {};
+  db.subscriptions ??= [];
+  db.expenses ??= [];
+  db.grades ??= [];
+  db.announcements ??= [];
   return db;
 }
 

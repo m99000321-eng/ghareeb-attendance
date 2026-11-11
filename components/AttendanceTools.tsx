@@ -11,8 +11,27 @@ type Row = {
   method: string;
 };
 
-export default function AttendanceTools({ date, rows }: { date: string; rows: Row[] }) {
+export default function AttendanceTools({
+  date,
+  group,
+  groups,
+  rows,
+}: {
+  date: string;
+  group: string;
+  groups: string[];
+  rows: Row[];
+}) {
   const router = useRouter();
+
+  function go(next: { date?: string; group?: string }) {
+    const params = new URLSearchParams();
+    const nextDate = next.date ?? date;
+    const nextGroup = next.group ?? group;
+    if (nextDate) params.set("date", nextDate);
+    if (nextGroup) params.set("group", nextGroup);
+    router.push(`/attendance?${params.toString()}`);
+  }
 
   function exportCsv() {
     const header = ["الاسم", "الصفة", "الرياضة", "الوقت", "طريقة التسجيل"];
@@ -36,15 +55,29 @@ export default function AttendanceTools({ date, rows }: { date: string; rows: Ro
   }
 
   return (
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+    <div className="flex flex-wrap items-center gap-2">
       <input
         type="date"
         value={date}
         onChange={(event) => {
-          if (event.target.value) router.push(`/attendance?date=${event.target.value}`);
+          if (event.target.value) go({ date: event.target.value });
         }}
         className="rounded-xl border border-white/10 bg-black/30 px-4 py-2.5 text-xs text-white outline-none focus:border-lime/50"
       />
+      <select
+        value={group}
+        onChange={(event) => go({ group: event.target.value })}
+        className="rounded-xl border border-white/10 bg-black/30 px-4 py-2.5 text-xs text-white outline-none focus:border-lime/50"
+      >
+        <option value="" className="bg-[#0a0c12]">
+          كل المجموعات
+        </option>
+        {groups.map((item) => (
+          <option key={item} value={item} className="bg-[#0a0c12]">
+            {item}
+          </option>
+        ))}
+      </select>
       <button
         onClick={exportCsv}
         disabled={rows.length === 0}

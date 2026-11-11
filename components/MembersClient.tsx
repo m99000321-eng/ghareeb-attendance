@@ -6,6 +6,7 @@ import { enrollFingerprint } from "@/lib/enroll";
 import type { Role, SafeMember, Sport } from "@/lib/types";
 import {
   IconArrowLeft,
+  IconCard,
   IconCheck,
   IconFingerprint,
   IconPlus,
@@ -38,6 +39,8 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
     role: "player" as Role,
     sport: "MMA" as Sport,
     phone: "",
+    parentPhone: "",
+    group: "",
   });
 
   const filtered = useMemo(() => {
@@ -48,7 +51,8 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
         !term ||
         member.name.includes(term) ||
         member.phone.includes(term) ||
-        member.sport.includes(term);
+        member.sport.includes(term) ||
+        (member.group ?? "").includes(term);
       return matchRole && matchTerm;
     });
   }, [members, query, role]);
@@ -71,8 +75,8 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
       if (!response.ok) throw new Error(data.error ?? "تعذر إضافة العضو");
       setMembers((current) => [data.member as SafeMember, ...current]);
       setOpen(false);
-      setForm({ name: "", role: "player", sport: "MMA", phone: "" });
-      notify("ok", "تمت إضافة العضو. سجّل بصمته الآن.");
+      setForm({ name: "", role: "player", sport: "MMA", phone: "", parentPhone: "", group: "" });
+      notify("ok", "تمت إضافة العضو. اطبع كارت الباركود وسجّل بصمته.");
     } catch (error) {
       notify("err", (error as Error).message);
     } finally {
@@ -243,6 +247,11 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
                     <span className="rounded-full bg-white/[0.05] px-2 py-0.5 text-white/50">
                       {member.sport}
                     </span>
+                    {member.group ? (
+                      <span className="rounded-full bg-lime/10 px-2 py-0.5 text-lime/80">
+                        {member.group}
+                      </span>
+                    ) : null}
                   </div>
                 </div>
                 <Link
@@ -299,6 +308,13 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
                     <IconCheck className="size-4" />
                   )}
                 </button>
+                <Link
+                  href={`/members/${member.id}/card`}
+                  title="طباعة كارت الباركود"
+                  className="grid size-10 place-items-center rounded-xl border border-gold/25 bg-gold/[0.06] text-gold/80 transition hover:border-gold/50 hover:text-gold"
+                >
+                  <IconCard className="size-4" />
+                </Link>
                 <button
                   onClick={() => removeMember(member)}
                   disabled={busy === `delete:${member.id}`}
@@ -383,8 +399,34 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
               onChange={(event) => setForm({ ...form, phone: event.target.value })}
               placeholder="01xxxxxxxxx"
               dir="ltr"
-              className="mb-6 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm outline-none transition placeholder:text-white/25 focus:border-lime/50"
+              className="mb-4 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm outline-none transition placeholder:text-white/25 focus:border-lime/50"
             />
+
+            <div className="mb-4 grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-white/55">
+                  المجموعة (اختياري)
+                </label>
+                <input
+                  value={form.group}
+                  onChange={(event) => setForm({ ...form, group: event.target.value })}
+                  placeholder="مثال: مجموعة ٦ مساءً"
+                  className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm outline-none transition placeholder:text-white/25 focus:border-lime/50"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-white/55">
+                  هاتف ولي الأمر (اختياري)
+                </label>
+                <input
+                  value={form.parentPhone}
+                  onChange={(event) => setForm({ ...form, parentPhone: event.target.value })}
+                  placeholder="01xxxxxxxxx"
+                  dir="ltr"
+                  className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm outline-none transition placeholder:text-white/25 focus:border-lime/50"
+                />
+              </div>
+            </div>
 
             <div className="flex gap-2">
               <button

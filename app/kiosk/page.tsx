@@ -1,27 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { startAuthentication } from "@simplewebauthn/browser";
 import type { SafeMember } from "@/lib/types";
 import {
   IconArrowLeft,
   IconCheck,
-  IconClock,
   IconFingerprint,
+  IconScan,
   IconX,
 } from "@/components/Icons";
 
 type Status = "idle" | "scanning" | "success" | "error";
 type Result = { member: SafeMember; at: string; alreadyCheckedIn: boolean };
-type Recent = { id: string; name: string; role: string; at: string };
 
 export default function KioskPage() {
   const [status, setStatus] = useState<Status>("idle");
   const [result, setResult] = useState<Result | null>(null);
   const [message, setMessage] = useState("");
   const [now, setNow] = useState<Date | null>(null);
-  const [recent, setRecent] = useState<Recent[]>([]);
   const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -29,23 +27,6 @@ export default function KioskPage() {
     const timer = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
-
-  const loadRecent = useCallback(async () => {
-    try {
-      const response = await fetch("/api/attendance");
-      if (!response.ok) return;
-      const data = await response.json();
-      setRecent((data.attendance as Recent[]).slice(0, 5));
-    } catch {
-      // silent: the kiosk keeps working without the ticker
-    }
-  }, []);
-
-  useEffect(() => {
-    loadRecent();
-    const timer = setInterval(loadRecent, 30_000);
-    return () => clearInterval(timer);
-  }, [loadRecent]);
 
   useEffect(
     () => () => {
@@ -96,7 +77,6 @@ export default function KioskPage() {
 
       setResult(data);
       setStatus("success");
-      loadRecent();
       resetTimer.current = setTimeout(() => {
         setStatus("idle");
         setResult(null);
@@ -279,33 +259,18 @@ export default function KioskPage() {
 
       <footer className="relative z-10 border-t border-white/[0.06] bg-black/20 px-6 py-4 lg:px-12">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <p className="flex items-center gap-2 text-[11px] text-white/35">
-            <IconClock className="size-3.5" />
-            آخر عمليات الحضور
+          <Link
+            href="/scan"
+            className="flex items-center gap-2 rounded-full border border-lime/25 bg-lime/[0.07] px-4 py-2 text-[11px] font-semibold text-lime transition hover:border-lime/50 hover:bg-lime/[0.12]"
+          >
+            <IconScan className="size-4" />
+            الحضور بباركود الكاميرا
+          </Link>
+          <p className="text-[11px] text-white/30">
+            قائمة الأعضاء لا تُعرض على شاشة الحضور
           </p>
-          <div className="flex flex-wrap items-center gap-2">
-            {recent.length === 0 ? (
-              <span className="text-[11px] text-white/25">لا توجد عمليات بعد</span>
-            ) : (
-              recent.map((entry) => (
-                <span
-                  key={entry.id}
-                  className="flex items-center gap-2 rounded-full border border-white/[0.07] bg-white/[0.03] px-3 py-1.5 text-[11px] text-white/55"
-                >
-                  <span className="size-1.5 rounded-full bg-lime" />
-                  {entry.name}
-                  <span className="tabular-nums text-white/30">
-                    {new Date(entry.at).toLocaleTimeString("ar-EG", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                </span>
-              ))
-            )}
-          </div>
           <p className="text-[10px] text-white/25">
-            أكاديمية الغريب — نظام البصمة البيومترية
+            أكاديمية الغريب — نظام الحضور
           </p>
         </div>
       </footer>

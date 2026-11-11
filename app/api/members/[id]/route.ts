@@ -15,6 +15,8 @@ export async function PATCH(
     role?: Role;
     sport?: Sport;
     phone?: string;
+    parentPhone?: string;
+    group?: string;
   };
 
   const db = await getDB();
@@ -25,6 +27,8 @@ export async function PATCH(
   if (body.role === "coach" || body.role === "player") member.role = body.role;
   if (body.sport) member.sport = body.sport;
   if (typeof body.phone === "string") member.phone = body.phone.trim();
+  if (typeof body.parentPhone === "string") member.parentPhone = body.parentPhone.trim();
+  if (typeof body.group === "string") member.group = body.group.trim();
 
   await saveDB(db);
   return Response.json({ ok: true });
@@ -42,6 +46,8 @@ export async function DELETE(
 
   db.members.splice(index, 1);
   db.attendance = db.attendance.filter((entry) => entry.memberId !== id);
+  db.subscriptions = db.subscriptions.filter((entry) => entry.memberId !== id);
+  db.grades = db.grades.filter((entry) => entry.memberId !== id);
   await saveDB(db);
   return Response.json({ ok: true });
 }

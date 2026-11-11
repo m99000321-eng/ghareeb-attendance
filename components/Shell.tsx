@@ -1,6 +1,6 @@
 import Link from "next/link";
 import NavLinks from "./NavLinks";
-import { IconFingerprint } from "./Icons";
+import { IconFingerprint, IconScan } from "./Icons";
 
 export default function Shell({ children }: { children: React.ReactNode }) {
   return (
@@ -18,14 +18,14 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           </span>
         </Link>
 
-        <div className="mt-9">
+        <div className="mt-8 min-h-0 flex-1 overflow-y-auto">
           <p className="mb-3 px-3 text-[11px] font-semibold tracking-wider text-white/30">
             القائمة الرئيسية
           </p>
           <NavLinks />
         </div>
 
-        <div className="mt-auto space-y-3">
+        <div className="mt-4 space-y-3">
           <Link
             href="/kiosk"
             className="flex items-center gap-3 rounded-2xl border border-lime/25 bg-lime/[0.07] px-4 py-3.5 transition hover:border-lime/50 hover:bg-lime/[0.12]"
@@ -36,6 +36,19 @@ export default function Shell({ children }: { children: React.ReactNode }) {
             <span>
               <span className="block text-sm font-bold text-lime">شاشة البصمة</span>
               <span className="block text-[11px] text-white/40">وضع الكشك — تسجيل الحضور</span>
+            </span>
+          </Link>
+
+          <Link
+            href="/scan"
+            className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 transition hover:border-lime/40 hover:bg-white/[0.06]"
+          >
+            <span className="grid size-10 place-items-center rounded-xl border border-lime/30 bg-lime/[0.08] text-lime">
+              <IconScan className="size-5" />
+            </span>
+            <span>
+              <span className="block text-sm font-bold text-white/85">الحضور بالباركود</span>
+              <span className="block text-[11px] text-white/40">كاميرا الموبايل — بدون قارئ</span>
             </span>
           </Link>
 

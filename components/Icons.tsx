@@ -147,3 +147,52 @@ export function IconSpark({ className }: IconProps) {
     </svg>
   );
 }
+
+export function IconScan({ className }: IconProps) {
+  return (
+    <svg {...base(className)}>
+      <path d="M4 8V6a2 2 0 0 1 2-2h2" />
+      <path d="M16 4h2a2 2 0 0 1 2 2v2" />
+      <path d="M20 16v2a2 2 0 0 1-2 2h-2" />
+      <path d="M8 20H6a2 2 0 0 1-2-2v-2" />
+      <path d="M7 12h2M11 12h2M15 12h2" />
+    </svg>
+  );
+}
+
+export function IconWallet({ className }: IconProps) {
+  return (
+    <svg {...base(className)}>
+      <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18a2 2 0 0 1 2 2v1" />
+      <rect x="3.4" y="7.5" width="17.2" height="12.5" rx="2.6" />
+      <path d="M16.4 13.2h1.4" />
+    </svg>
+  );
+}
+
+export function IconChart({ className }: IconProps) {
+  return (
+    <svg {...base(className)}>
+      <path d="M4 20V9M10 20V4M16 20v-7M22 20H2" />
+    </svg>
+  );
+}
+
+export function IconBell({ className }: IconProps) {
+  return (
+    <svg {...base(className)}>
+      <path d="M18 16.5H6l1.3-2.1V10a4.7 4.7 0 0 1 9.4 0v4.4z" />
+      <path d="M10.2 19.5a2 2 0 0 0 3.6 0" />
+    </svg>
+  );
+}
+
+export function IconCard({ className }: IconProps) {
+  return (
+    <svg {...base(className)}>
+      <rect x="2.6" y="5.4" width="18.8" height="13.2" rx="2.6" />
+      <path d="M2.6 9.6h18.8" />
+      <path d="M6 14.4h5" />
+    </svg>
+  );
+}
