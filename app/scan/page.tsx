@@ -25,12 +25,6 @@ export default function ScanPage() {
         </div>
         <div className="flex items-center gap-2">
           <Link
-            href="/kiosk"
-            className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-xs text-white/60 transition hover:border-white/25 hover:text-white"
-          >
-            الحضور بالبصمة
-          </Link>
-          <Link
             href="/login"
             className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-xs text-white/60 transition hover:border-white/25 hover:text-white"
           >
@@ -45,7 +39,7 @@ export default function ScanPage() {
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-lime/20 bg-lime/[0.06] px-3 py-1.5 text-[11px] font-semibold text-lime">
               <IconScan className="size-4" />
-              كاميرا الموبايل — بدون قارئ باركود
+              كاميرا الموبايل
             </div>
             <h1 className="mt-3 text-3xl font-extrabold md:text-4xl">تسجيل الحضور بالباركود</h1>
             <p className="mt-2 max-w-xl text-sm leading-7 text-white/45">
