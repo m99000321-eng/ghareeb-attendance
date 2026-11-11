@@ -1,5 +1,6 @@
 export type Role = "player" | "coach";
 export type Sport = "ملاكمة" | "كيك بوكس" | "كونغ فو" | "MMA";
+export type Tier = "junior" | "senior";
 
 export type Credential = {
   id: string;
@@ -13,6 +14,7 @@ export type Member = {
   name: string;
   role: Role;
   sport: Sport;
+  tier?: Tier;
   phone: string;
   parentPhone?: string;
   group?: string;

@@ -1,3 +1,8 @@
+import type { Tier } from "./types";
+
+export const TIER_LABEL: Record<Tier, string> = { junior: "صغار", senior: "كبار" };
+export const TIER_PRICE: Record<Tier, number> = { junior: 500, senior: 700 };
+
 export function monthKey(date = new Date()): string {
   return date.toLocaleDateString("en-CA").slice(0, 7);
 }

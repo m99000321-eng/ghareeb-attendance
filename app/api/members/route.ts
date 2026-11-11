@@ -1,6 +1,6 @@
 import { ensureBarcodeToken, getDB, safeMember, saveDB } from "@/lib/db";
 import { denyApi, isApiAuthorized } from "@/lib/guard";
-import type { Member, Role, Sport } from "@/lib/types";
+import type { Member, Role, Sport, Tier } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +22,7 @@ export async function POST(request: Request) {
     phone?: string;
     parentPhone?: string;
     group?: string;
+    tier?: Tier;
   };
 
   const name = body.name?.trim();
@@ -31,6 +32,7 @@ export async function POST(request: Request) {
 
   const role: Role = body.role === "coach" ? "coach" : "player";
   const sport: Sport = SPORTS.includes(body.sport as Sport) ? (body.sport as Sport) : "MMA";
+  const tier: Tier = body.tier === "senior" ? "senior" : "junior";
 
   const db = await getDB();
   const member: Member = {
@@ -38,6 +40,7 @@ export async function POST(request: Request) {
     name,
     role,
     sport,
+    tier,
     phone: body.phone?.trim() ?? "",
     parentPhone: body.parentPhone?.trim() ?? "",
     group: body.group?.trim() ?? "",

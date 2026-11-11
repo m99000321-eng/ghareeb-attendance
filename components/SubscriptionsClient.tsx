@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { SafeMember, Subscription } from "@/lib/types";
-import { money, monthLabel } from "@/lib/format";
+import { TIER_LABEL, TIER_PRICE, money, monthLabel } from "@/lib/format";
 import { IconCheck, IconDownload, IconTrash, IconWallet, IconX } from "./Icons";
 
 function Spinner() {
@@ -115,6 +115,9 @@ export default function SubscriptionsClient({
             الاشتراكات الشهرية
           </h1>
           <p className="mt-2 text-sm text-white/45">{monthLabel(month)}</p>
+          <p className="mt-1 text-[11px] text-white/30">
+            الاشتراك الشهري: الصغار ٥٠٠ ج.م — الكبار ٧٠٠ ج.م
+          </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <input
@@ -155,7 +158,7 @@ export default function SubscriptionsClient({
       <section className="anim-fade-up delay-2 panel overflow-hidden">
         <div className="hidden grid-cols-[2fr_1.2fr_1fr_1fr_0.9fr] gap-3 border-b border-white/[0.05] bg-black/20 px-6 py-3 text-[10px] font-semibold tracking-wider text-white/30 md:grid">
           <span>العضو</span>
-          <span>المجموعة</span>
+          <span>الفئة / المجموعة</span>
           <span>المبلغ الشهري</span>
           <span>الحالة</span>
           <span />
@@ -212,7 +215,10 @@ function SubscriptionRow({
   onToggle: (record: Subscription) => void;
   onRemove: (record: Subscription) => void;
 }) {
-  const [amount, setAmount] = useState(record ? String(record.amount) : "");
+  const tier = member.tier ?? "junior";
+  const [amount, setAmount] = useState(
+    record ? String(record.amount) : String(TIER_PRICE[tier]),
+  );
 
   return (
     <div className="grid gap-3 px-6 py-3.5 md:grid-cols-[2fr_1.2fr_1fr_1fr_0.9fr] md:items-center">
@@ -225,7 +231,12 @@ function SubscriptionRow({
         </span>
         <span className="truncate text-sm font-bold">{member.name}</span>
       </span>
-      <span className="text-xs text-white/45">{member.group || "—"}</span>
+      <span className="flex flex-wrap items-center gap-1.5 text-xs text-white/45">
+        <span className="rounded-full bg-gold/10 px-2 py-0.5 text-[10px] font-bold text-gold/80">
+          {TIER_LABEL[tier]}
+        </span>
+        {member.group || "—"}
+      </span>
       <span className="flex items-center gap-2">
         <input
           value={amount}

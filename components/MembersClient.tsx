@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import type { Role, SafeMember, Sport } from "@/lib/types";
+import type { Role, SafeMember, Sport, Tier } from "@/lib/types";
+import { TIER_LABEL, TIER_PRICE } from "@/lib/format";
 import {
   IconArrowLeft,
   IconCard,
@@ -38,6 +39,7 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
     name: "",
     role: "player" as Role,
     sport: "MMA" as Sport,
+    tier: "junior" as Tier,
     phone: "",
     parentPhone: "",
     group: "",
@@ -75,7 +77,7 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
       if (!response.ok) throw new Error(data.error ?? "تعذر إضافة العضو");
       setMembers((current) => [data.member as SafeMember, ...current]);
       setOpen(false);
-      setForm({ name: "", role: "player", sport: "MMA", phone: "", parentPhone: "", group: "" });
+      setForm({ name: "", role: "player", sport: "MMA", tier: "junior", phone: "", parentPhone: "", group: "" });
       notify("ok", "تمت الإضافة — اطبع الكارت أو ابعت الباركود على واتساب.");
     } catch (error) {
       notify("err", (error as Error).message);
@@ -273,6 +275,9 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
                     <span className="rounded-full bg-white/[0.05] px-2 py-0.5 text-white/50">
                       {member.sport}
                     </span>
+                    <span className="rounded-full bg-gold/10 px-2 py-0.5 text-gold/80">
+                      {TIER_LABEL[member.tier ?? "junior"]} · {TIER_PRICE[member.tier ?? "junior"]}
+                    </span>
                     {member.group ? (
                       <span className="rounded-full bg-lime/10 px-2 py-0.5 text-lime/80">
                         {member.group}
@@ -400,6 +405,26 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
                   }`}
                 >
                   {ROLE_LABEL[value]}
+                </button>
+              ))}
+            </div>
+
+            <label className="mb-1 block text-xs font-semibold text-white/55">
+              فئة الاشتراك
+            </label>
+            <div className="mb-4 grid grid-cols-2 gap-2">
+              {(["junior", "senior"] as Tier[]).map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setForm({ ...form, tier: value })}
+                  className={`rounded-xl border px-4 py-2.5 text-sm font-bold transition ${
+                    form.tier === value
+                      ? "border-lime/50 bg-lime/10 text-lime"
+                      : "border-white/10 bg-white/[0.02] text-white/50"
+                  }`}
+                >
+                  {TIER_LABEL[value]} — {TIER_PRICE[value]} ج.م
                 </button>
               ))}
             </div>
