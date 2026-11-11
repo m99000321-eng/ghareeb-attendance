@@ -180,7 +180,7 @@ export default function WhatsappClient({ initial }: { initial: WhatsappStatus })
       <div className="anim-fade-up flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
           <p className="mb-2 text-[11px] font-semibold tracking-[0.2em] text-lime/80">
-            WHATSAPP CONNECTION
+            ربط واتساب
           </p>
           <h1 className="text-[30px] font-extrabold leading-tight md:text-[38px]">
             واتساب الأكاديمية
@@ -252,13 +252,13 @@ export default function WhatsappClient({ initial }: { initial: WhatsappStatus })
               {status.provider === "green" ? (
                 <>
                   <div className="flex items-center justify-between rounded-xl border border-white/[0.06] bg-black/25 px-3.5 py-2.5">
-                    <dt className="text-white/45">idInstance</dt>
+                    <dt className="text-white/45">رقم الـInstance</dt>
                     <dd dir="ltr" className="font-mono text-xs tabular-nums">
                       {status.instanceId}
                     </dd>
                   </div>
                   <div className="flex items-center justify-between rounded-xl border border-white/[0.06] bg-black/25 px-3.5 py-2.5">
-                    <dt className="text-white/45">apiTokenInstance</dt>
+                    <dt className="text-white/45">التوكن</dt>
                     <dd dir="ltr" className="font-mono text-xs">••••••••{status.tokenTail}</dd>
                   </div>
                 </>
@@ -276,7 +276,7 @@ export default function WhatsappClient({ initial }: { initial: WhatsappStatus })
             <form onSubmit={saveCredentials} className="grid gap-3">
               <div>
                 <label className="mb-1.5 block text-xs font-semibold text-white/55">
-                  idInstance
+                  رقم الـInstance
                 </label>
                 <input
                   value={instanceId}
@@ -290,12 +290,12 @@ export default function WhatsappClient({ initial }: { initial: WhatsappStatus })
               </div>
               <div>
                 <label className="mb-1.5 block text-xs font-semibold text-white/55">
-                  apiTokenInstance
+                  التوكن
                 </label>
                 <input
                   value={token}
                   onChange={(event) => setToken(event.target.value)}
-                  placeholder="انسخ التوكن كامل من صفحة الـInstance"
+                  placeholder="انسخ التوكن كامل من لوحة Green API"
                   dir="ltr"
                   type="password"
                   autoComplete="off"
@@ -436,11 +436,12 @@ export default function WhatsappClient({ initial }: { initial: WhatsappStatus })
                   .
                 </li>
                 <li>
-                  <span className="font-bold text-white/70">2.</span> Create Instance ← WhatsApp.
+                  <span className="font-bold text-white/70">2.</span> اعمل Instance جديدة واختار
+                  واتساب.
                 </li>
                 <li>
-                  <span className="font-bold text-white/70">3.</span> انسخ idInstance والتوكن
-                  وحطهم هنا — وبعدها الربط والـQR كله جوه النظام.
+                  <span className="font-bold text-white/70">3.</span> انسخ رقم الـInstance
+                  والتوكن وحطهم هنا — وبعدها الربط والـQR كله جوه النظام.
                 </li>
               </ol>
             </section>
