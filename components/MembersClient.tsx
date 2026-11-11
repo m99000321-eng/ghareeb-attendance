@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { enrollFingerprint } from "@/lib/enroll";
-import { barcodeMessage, memberCardUrl, waLink } from "@/lib/format";
 import type { Role, SafeMember, Sport } from "@/lib/types";
 import {
   IconArrowLeft,
@@ -114,7 +113,7 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
     }
   }
 
-  function sendBarcode(member: SafeMember) {
+  async function sendBarcode(member: SafeMember) {
     const phone = member.phone || member.parentPhone || "";
     if (!phone) {
       notify("err", "أضف رقم الهاتف أو رقم ولي الأمر أولاً");
@@ -124,8 +123,31 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
       notify("err", "رابط الباركود غير جاهز — افتح كارت العضو ثم حاول مرة أخرى");
       return;
     }
-    const url = memberCardUrl(window.location.origin, member.barcodeToken);
-    window.open(waLink(phone, barcodeMessage(member, url)), "_blank", "noopener");
+
+    setBusy(`wa:${member.id}`);
+    try {
+      const response = await fetch("/api/whatsapp/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ memberId: member.id, phone }),
+      });
+      const data = (await response.json().catch(() => ({}))) as {
+        error?: string;
+        configured?: boolean;
+      };
+      if (!response.ok) {
+        throw new Error(
+          data.configured === false
+            ? "الإرسال التلقائي غير مفعّل — أضف مفاتيح واتساب على السيرفر"
+            : data.error ?? "تعذر إرسال الباركود",
+        );
+      }
+      notify("ok", `تم إرسال الباركود على واتساب ${phone}`);
+    } catch (error) {
+      notify("err", (error as Error).message);
+    } finally {
+      setBusy(null);
+    }
   }
 
   async function enroll(member: SafeMember) {
@@ -330,7 +352,7 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
                 </button>
                 <button
                   onClick={() => sendBarcode(member)}
-                  disabled={!member.phone && !member.parentPhone}
+                  disabled={(!member.phone && !member.parentPhone) || busy === `wa:${member.id}`}
                   title={
                     member.phone || member.parentPhone
                       ? "إرسال الباركود على واتساب"
@@ -338,7 +360,11 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
                   }
                   className="grid size-10 place-items-center rounded-xl border border-[#25d366]/25 bg-[#25d366]/[0.06] text-[#6ef0a2]/85 transition hover:border-[#25d366]/50 hover:bg-[#25d366]/[0.14] disabled:opacity-35"
                 >
-                  <IconWhatsApp className="size-4" />
+                  {busy === `wa:${member.id}` ? (
+                    <span className="inline-block size-4 animate-spin rounded-full border-2 border-[#6ef0a2]/25 border-t-[#6ef0a2]" />
+                  ) : (
+                    <IconWhatsApp className="size-4" />
+                  )}
                 </button>
                 <Link
                   href={`/members/${member.id}/card`}
