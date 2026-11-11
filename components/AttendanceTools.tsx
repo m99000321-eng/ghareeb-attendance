@@ -62,7 +62,7 @@ export default function AttendanceTools({
         onChange={(event) => {
           if (event.target.value) go({ date: event.target.value });
         }}
-        className="rounded-xl border border-white/10 bg-black/30 px-4 py-2.5 text-xs text-white outline-none focus:border-lime/50"
+        className="date-field rounded-xl border border-white/10 bg-black/30 px-4 py-2.5 text-xs text-white outline-none focus:border-lime/50"
       />
       <select
         value={group}

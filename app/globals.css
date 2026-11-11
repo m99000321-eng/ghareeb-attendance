@@ -279,9 +279,50 @@ body {
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(1);
   opacity: 0.7;
   cursor: pointer;
+}
+
+.date-field {
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+  animation: date-glow 3.6s ease-in-out infinite;
+}
+
+.date-field:hover,
+.date-field:focus {
+  border-color: rgba(200, 255, 46, 0.55);
+  animation-play-state: paused;
+  box-shadow:
+    0 0 0 3px rgba(200, 255, 46, 0.1),
+    0 0 26px -8px rgba(200, 255, 46, 0.55);
+}
+
+.date-field::-webkit-calendar-picker-indicator {
+  opacity: 0.7;
+  cursor: pointer;
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.date-field:hover::-webkit-calendar-picker-indicator,
+.date-field:focus::-webkit-calendar-picker-indicator {
+  opacity: 1;
+  transform: scale(1.15) rotate(-8deg);
+}
+
+@keyframes date-glow {
+  0%,
+  100% {
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 0 rgba(200, 255, 46, 0);
+  }
+  50% {
+    border-color: rgba(200, 255, 46, 0.35);
+    box-shadow: 0 0 18px -6px rgba(200, 255, 46, 0.45);
+  }
 }
 
 ::-webkit-scrollbar {

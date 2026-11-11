@@ -63,7 +63,7 @@ export default function LoginPage() {
               <h1 className="anim-fade-up delay-1 relative mt-8 text-[26px] font-extrabold leading-snug sm:text-[30px]">
                 نظام حضور الأكاديمية
                 <span className="mt-1 block bg-gradient-to-l from-lime via-lime/80 to-gold bg-clip-text text-transparent">
-                  بلمسة إصبع أو باركود
+                  بالباركود وكاميرا الموبايل
                 </span>
               </h1>
               <p className="anim-fade-up delay-2 mt-3 max-w-sm text-sm leading-7 text-white/45">

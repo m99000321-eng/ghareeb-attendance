@@ -196,7 +196,7 @@ export default function GradesClient({
             type="date"
             value={form.at}
             onChange={(event) => setForm({ ...form, at: event.target.value })}
-            className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 text-sm outline-none focus:border-lime/50"
+            className="date-field w-full rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 text-sm outline-none focus:border-lime/50"
           />
           <button
             type="submit"
