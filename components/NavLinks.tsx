@@ -9,6 +9,7 @@ import {
   IconHome,
   IconUsers,
   IconWallet,
+  IconWhatsApp,
 } from "./Icons";
 
 const items = [
@@ -19,6 +20,7 @@ const items = [
   { href: "/expenses", label: "المصروفات", icon: IconWallet },
   { href: "/grades", label: "الدرجات والمستوى", icon: IconChart },
   { href: "/announcements", label: "التنبيهات", icon: IconBell },
+  { href: "/whatsapp", label: "واتساب الأكاديمية", icon: IconWhatsApp },
   { href: "/reports", label: "التقارير", icon: IconChart },
 ];
 

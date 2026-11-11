@@ -71,6 +71,22 @@ export type Challenge = {
   expires: number;
 };
 
+export type WhatsappSettings = {
+  instanceId: string;
+  token: string;
+  updatedAt: string;
+};
+
+export type WhatsappStatus = {
+  configured: boolean;
+  provider: "green" | "meta" | null;
+  source: "env" | "db" | null;
+  state: string;
+  instanceId: string;
+  phone: string;
+  tokenTail: string;
+};
+
 export type DB = {
   members: Member[];
   attendance: Attendance[];
@@ -79,6 +95,9 @@ export type DB = {
   expenses: Expense[];
   grades: Grade[];
   announcements: Announcement[];
+  settings?: {
+    whatsapp?: WhatsappSettings;
+  };
 };
 
 export type SafeMember = Omit<Member, "credential"> & {

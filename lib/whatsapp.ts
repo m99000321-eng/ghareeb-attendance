@@ -1,28 +1,139 @@
+import { getDB } from "./db";
 import { waPhone } from "./format";
+import type { WhatsappStatus } from "./types";
+
+const GREEN_BASE = "https://api.green-api.com";
 
 type SendResult =
   | { ok: true; provider: "green" | "meta" }
   | { ok: false; configured: boolean; error: string };
 
-export function whatsappConfigured(): boolean {
-  return Boolean(
-    (process.env.GREEN_API_INSTANCE_ID && process.env.GREEN_API_TOKEN) ||
-      (process.env.WHATSAPP_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID),
-  );
+export type GreenCreds = {
+  instanceId: string;
+  token: string;
+  source: "env" | "db";
+};
+
+export async function getGreenCreds(): Promise<GreenCreds | null> {
+  const envId = process.env.GREEN_API_INSTANCE_ID?.trim();
+  const envToken = process.env.GREEN_API_TOKEN?.trim();
+  if (envId && envToken) {
+    return { instanceId: envId, token: envToken, source: "env" };
+  }
+  const db = await getDB();
+  const saved = db.settings?.whatsapp;
+  if (saved?.instanceId && saved.token) {
+    return { instanceId: saved.instanceId, token: saved.token, source: "db" };
+  }
+  return null;
+}
+
+function metaConfigured(): boolean {
+  return Boolean(process.env.WHATSAPP_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID);
+}
+
+export async function greenState(creds: GreenCreds): Promise<string> {
+  try {
+    const response = await fetch(
+      `${GREEN_BASE}/waInstance${creds.instanceId}/getStateInstance/${creds.token}`,
+      { cache: "no-store" },
+    );
+    if (response.status === 401 || response.status === 403) return "unauthorized";
+    const data = (await response.json().catch(() => ({}))) as {
+      stateInstance?: string;
+      message?: string;
+    };
+    if (!response.ok) {
+      return data.message?.toLowerCase().includes("unauthorized") ? "unauthorized" : "error";
+    }
+    return data.stateInstance ?? "unknown";
+  } catch {
+    return "unreachable";
+  }
+}
+
+async function greenPhone(creds: GreenCreds): Promise<string> {
+  try {
+    const response = await fetch(
+      `${GREEN_BASE}/waInstance${creds.instanceId}/getSettings/${creds.token}`,
+      { cache: "no-store" },
+    );
+    if (!response.ok) return "";
+    const data = (await response.json().catch(() => ({}))) as { wid?: string };
+    return typeof data.wid === "string" ? data.wid.split("@")[0] : "";
+  } catch {
+    return "";
+  }
+}
+
+export type GreenQrResult = {
+  type: string;
+  image?: string;
+  message?: string;
+};
+
+export async function greenQr(creds: GreenCreds): Promise<GreenQrResult> {
+  try {
+    const response = await fetch(
+      `${GREEN_BASE}/waInstance${creds.instanceId}/qr/${creds.token}`,
+      { cache: "no-store" },
+    );
+    const data = (await response.json().catch(() => ({}))) as {
+      type?: string;
+      message?: string;
+    };
+    const type = data.type ?? (response.ok ? "error" : "unauthorized");
+    if (type !== "qrCode" || !data.message) {
+      return { type, message: data.message };
+    }
+    const image = data.message.startsWith("data:")
+      ? data.message
+      : `data:image/png;base64,${data.message}`;
+    return { type, image };
+  } catch {
+    return { type: "unreachable" };
+  }
+}
+
+export async function whatsappStatus(): Promise<WhatsappStatus> {
+  const green = await getGreenCreds();
+  if (green) {
+    const state = await greenState(green);
+    return {
+      configured: true,
+      provider: "green",
+      source: green.source,
+      state,
+      instanceId: green.instanceId,
+      phone: state === "authorized" ? await greenPhone(green) : "",
+      tokenTail: green.token.slice(-4),
+    };
+  }
+
+  const meta = metaConfigured();
+  return {
+    configured: meta,
+    provider: meta ? "meta" : null,
+    source: meta ? "env" : null,
+    state: meta ? "authorized" : "unconfigured",
+    instanceId: "",
+    phone: "",
+    tokenTail: "",
+  };
 }
 
 export async function sendWhatsApp(phone: string, text: string): Promise<SendResult> {
   const target = waPhone(phone);
+  const green = await getGreenCreds();
+  const configured = Boolean(green) || metaConfigured();
   if (!target || target.length < 10) {
-    return { ok: false, configured: whatsappConfigured(), error: "رقم الواتساب غير صحيح" };
+    return { ok: false, configured, error: "رقم الواتساب غير صحيح" };
   }
 
-  const greenId = process.env.GREEN_API_INSTANCE_ID;
-  const greenToken = process.env.GREEN_API_TOKEN;
-  if (greenId && greenToken) {
+  if (green) {
     try {
       const response = await fetch(
-        `https://api.green-api.com/waInstance${greenId}/sendMessage/${greenToken}`,
+        `${GREEN_BASE}/waInstance${green.instanceId}/sendMessage/${green.token}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -33,12 +144,13 @@ export async function sendWhatsApp(phone: string, text: string): Promise<SendRes
       const data = (await response.json().catch(() => ({}))) as {
         idMessage?: string;
         message?: string;
+        error?: string;
       };
       if (!response.ok || !data.idMessage) {
         return {
           ok: false,
           configured: true,
-          error: data.message ?? "تعذر الإرسال من Green API",
+          error: data.message ?? data.error ?? "تعذر الإرسال من Green API",
         };
       }
       return { ok: true, provider: "green" };
@@ -60,9 +172,7 @@ export async function sendWhatsApp(phone: string, text: string): Promise<SendRes
           template: {
             name: template,
             language: { code: language },
-            components: [
-              { type: "body", parameters: [{ type: "text", text }] },
-            ],
+            components: [{ type: "body", parameters: [{ type: "text", text }] }],
           },
         }
       : {
@@ -101,6 +211,6 @@ export async function sendWhatsApp(phone: string, text: string): Promise<SendRes
   return {
     ok: false,
     configured: false,
-    error: "الإرسال التلقائي غير مفعّل — أضف بيانات Green API أو WhatsApp Cloud API على السيرفر",
+    error: "الإرسال التلقائي غير مفعّل — أضف بيانات Green API أو WhatsApp Cloud API",
   };
 }
