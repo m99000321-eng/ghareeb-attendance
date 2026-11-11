@@ -1,4 +1,4 @@
-import { getDB, safeMember, saveDB } from "@/lib/db";
+import { ensureBarcodeToken, getDB, safeMember, saveDB } from "@/lib/db";
 import { denyApi, isApiAuthorized } from "@/lib/guard";
 import type { Member, Role, Sport } from "@/lib/types";
 
@@ -44,6 +44,7 @@ export async function POST(request: Request) {
     joinedAt: new Date().toISOString(),
     color: COLORS[db.members.length % COLORS.length],
   };
+  ensureBarcodeToken(member);
   db.members.push(member);
   await saveDB(db);
 

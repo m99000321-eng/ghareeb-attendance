@@ -45,6 +45,15 @@ export async function getDB(): Promise<DB> {
   db.expenses ??= [];
   db.grades ??= [];
   db.announcements ??= [];
+  let tokensAdded = false;
+  for (const member of db.members) {
+    if (!member.barcodeToken) {
+      ensureBarcodeToken(member);
+      tokensAdded = true;
+    }
+  }
+  // Persist freshly generated card tokens so shared links stay stable.
+  if (tokensAdded) await saveDB(db);
   return db;
 }
 
@@ -79,6 +88,13 @@ export function safeMember(member: Member): SafeMember {
     enrolled: Boolean(credential),
     credentialAt: credential?.createdAt,
   };
+}
+
+export function ensureBarcodeToken(member: Member): string {
+  if (!member.barcodeToken) {
+    member.barcodeToken = crypto.randomUUID().replace(/-/g, "").slice(0, 20);
+  }
+  return member.barcodeToken;
 }
 
 export function dayKey(iso: string): string {

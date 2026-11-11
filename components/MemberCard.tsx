@@ -1,8 +1,16 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { SafeMember } from "@/lib/types";
-import { IconArrowLeft, IconCard, IconShield, IconUsers } from "./Icons";
+import { barcodeMessage, memberCardUrl, waLink } from "@/lib/format";
+import {
+  IconArrowLeft,
+  IconCard,
+  IconCheck,
+  IconShield,
+  IconUsers,
+  IconWhatsApp,
+} from "./Icons";
 
 function Barcode({ value }: { value: string }) {
   const ref = useRef<SVGSVGElement | null>(null);
@@ -31,30 +39,85 @@ function Barcode({ value }: { value: string }) {
   return <svg ref={ref} className="h-[52px] w-full" role="img" aria-label={`باركود ${value}`} />;
 }
 
-export default function MemberCard({ member }: { member: SafeMember }) {
+export default function MemberCard({
+  member,
+  publicView = false,
+}: {
+  member: SafeMember;
+  publicView?: boolean;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  const token = member.barcodeToken ?? "";
+  const origin = typeof window === "undefined" ? "" : window.location.origin;
+  const cardUrl = token ? memberCardUrl(origin, token) : "";
+  const message = barcodeMessage(member, cardUrl);
+
+  function sendWhatsApp(phone: string) {
+    if (!phone) return;
+    window.open(waLink(phone, message), "_blank", "noopener");
+  }
+
+  async function copyLink() {
+    if (!cardUrl) return;
+    try {
+      await navigator.clipboard.writeText(cardUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      window.prompt("انسخ رابط الباركود:", cardUrl);
+    }
+  }
+
   return (
     <div className="flex flex-col items-center gap-6">
-      <div className="no-print flex flex-wrap items-center justify-center gap-3">
-        <button
-          onClick={() => window.print()}
-          className="flex items-center gap-2 rounded-xl bg-lime px-5 py-3 text-sm font-extrabold text-ink transition hover:brightness-105"
-        >
-          <IconCard className="size-4" />
-          طباعة الكارت
-        </button>
-        <button
-          onClick={() => window.history.back()}
-          className="flex items-center gap-2 rounded-xl border border-white/10 px-5 py-3 text-sm font-semibold text-white/55 transition hover:border-white/25 hover:text-white"
-        >
-          <IconArrowLeft className="size-4 rotate-180" />
-          رجوع
-        </button>
-      </div>
+      {!publicView ? (
+        <>
+          <div className="no-print flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={() => window.print()}
+              className="flex items-center gap-2 rounded-xl bg-lime px-5 py-3 text-sm font-extrabold text-ink transition hover:brightness-105"
+            >
+              <IconCard className="size-4" />
+              طباعة الكارت
+            </button>
+            <button
+              onClick={() => sendWhatsApp(member.phone)}
+              disabled={!member.phone}
+              title={member.phone ? "إرسال الباركود على واتساب الطالب" : "أضف رقم هاتف الطالب أولاً"}
+              className="flex items-center gap-2 rounded-xl border border-[#25d366]/35 bg-[#25d366]/[0.08] px-5 py-3 text-sm font-bold text-[#6ef0a2] transition hover:bg-[#25d366]/[0.16] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <IconWhatsApp className="size-4" />
+              واتساب الطالب
+            </button>
+            <button
+              onClick={() => sendWhatsApp(member.parentPhone ?? "")}
+              disabled={!member.parentPhone}
+              title={member.parentPhone ? "إرسال الباركود على واتساب ولي الأمر" : "أضف رقم ولي الأمر أولاً"}
+              className="flex items-center gap-2 rounded-xl border border-[#25d366]/25 bg-white/[0.03] px-5 py-3 text-sm font-bold text-[#6ef0a2]/80 transition hover:bg-[#25d366]/[0.1] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <IconWhatsApp className="size-4" />
+              واتساب ولي الأمر
+            </button>
+            <button
+              onClick={copyLink}
+              className="flex items-center gap-2 rounded-xl border border-white/10 px-4 py-3 text-sm font-semibold text-white/55 transition hover:border-white/25 hover:text-white"
+            >
+              {copied ? <IconCheck className="size-4 text-lime" /> : null}
+              {copied ? "تم نسخ الرابط" : "نسخ رابط الباركود"}
+            </button>
+          </div>
 
-      <p className="no-print max-w-md text-center text-xs leading-relaxed text-white/35">
-        اطبع الكارت وقصّه على المقاس المحدد وسلّمه للطالب. يُستخدم الباركود في تسجيل الحضور من صفحة
-        «الحضور بالباركود» بكاميرا الموبايل.
-      </p>
+          <p className="no-print max-w-lg text-center text-xs leading-relaxed text-white/35">
+            رابط الباركود يفتح كارت الطالب على أي موبايل بدون تسجيل دخول — الطالب يعرضه للكاميرا عند
+            الحضور. اطبع الكارت كنسخة احتياطية، وقصّه على المقاس المحدد.
+          </p>
+        </>
+      ) : (
+        <p className="no-print max-w-sm text-center text-sm leading-relaxed text-white/55">
+          اعرض الباركود ده قدام كاميرا الحضور في الأكاديمية.
+        </p>
+      )}
 
       <div className="card-sheet">
         <article className="member-card">
@@ -99,6 +162,16 @@ export default function MemberCard({ member }: { member: SafeMember }) {
           </div>
         </article>
       </div>
+
+      {!publicView ? (
+        <button
+          onClick={() => window.history.back()}
+          className="no-print flex items-center gap-2 rounded-xl border border-white/10 px-5 py-3 text-sm font-semibold text-white/55 transition hover:border-white/25 hover:text-white"
+        >
+          <IconArrowLeft className="size-4 rotate-180" />
+          رجوع
+        </button>
+      ) : null}
     </div>
   );
 }

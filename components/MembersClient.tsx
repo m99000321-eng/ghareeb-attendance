@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { enrollFingerprint } from "@/lib/enroll";
+import { barcodeMessage, memberCardUrl, waLink } from "@/lib/format";
 import type { Role, SafeMember, Sport } from "@/lib/types";
 import {
   IconArrowLeft,
@@ -14,6 +15,7 @@ import {
   IconShield,
   IconTrash,
   IconUsers,
+  IconWhatsApp,
   IconX,
 } from "./Icons";
 
@@ -76,7 +78,7 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
       setMembers((current) => [data.member as SafeMember, ...current]);
       setOpen(false);
       setForm({ name: "", role: "player", sport: "MMA", phone: "", parentPhone: "", group: "" });
-      notify("ok", "تمت إضافة العضو. اطبع كارت الباركود وسجّل بصمته.");
+      notify("ok", "تمت الإضافة — اطبع الكارت أو ابعت الباركود على واتساب.");
     } catch (error) {
       notify("err", (error as Error).message);
     } finally {
@@ -110,6 +112,20 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
     } finally {
       setBusy(null);
     }
+  }
+
+  function sendBarcode(member: SafeMember) {
+    const phone = member.phone || member.parentPhone || "";
+    if (!phone) {
+      notify("err", "أضف رقم الهاتف أو رقم ولي الأمر أولاً");
+      return;
+    }
+    if (!member.barcodeToken) {
+      notify("err", "رابط الباركود غير جاهز — افتح كارت العضو ثم حاول مرة أخرى");
+      return;
+    }
+    const url = memberCardUrl(window.location.origin, member.barcodeToken);
+    window.open(waLink(phone, barcodeMessage(member, url)), "_blank", "noopener");
   }
 
   async function enroll(member: SafeMember) {
@@ -307,6 +323,18 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
                   ) : (
                     <IconCheck className="size-4" />
                   )}
+                </button>
+                <button
+                  onClick={() => sendBarcode(member)}
+                  disabled={!member.phone && !member.parentPhone}
+                  title={
+                    member.phone || member.parentPhone
+                      ? "إرسال الباركود على واتساب"
+                      : "أضف رقم هاتف لإرسال الباركود"
+                  }
+                  className="grid size-10 place-items-center rounded-xl border border-[#25d366]/25 bg-[#25d366]/[0.06] text-[#6ef0a2]/85 transition hover:border-[#25d366]/50 hover:bg-[#25d366]/[0.14] disabled:opacity-35"
+                >
+                  <IconWhatsApp className="size-4" />
                 </button>
                 <Link
                   href={`/members/${member.id}/card`}

@@ -33,3 +33,23 @@ export function waLink(phone: string, text: string): string {
   const target = waPhone(phone);
   return `https://wa.me/${target}?text=${encodeURIComponent(text)}`;
 }
+
+export function memberCardUrl(origin: string, token: string): string {
+  return `${origin}/c/${token}`;
+}
+
+export function barcodeMessage(
+  member: { name: string; id: string; group?: string },
+  cardUrl: string,
+): string {
+  return [
+    `أهلاً ${member.name}،`,
+    "ده كارت العضوية الرقمي بتاعك في أكاديمية الغريب.",
+    member.group ? `المجموعة: ${member.group}` : "",
+    `كود العضوية: ${member.id}`,
+    "افتح اللينك واعرض الباركود قدام الكاميرا عند الدخول:",
+    cardUrl,
+  ]
+    .filter(Boolean)
+    .join("\n");
+}

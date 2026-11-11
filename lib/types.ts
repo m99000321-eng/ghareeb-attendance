@@ -16,6 +16,7 @@ export type Member = {
   phone: string;
   parentPhone?: string;
   group?: string;
+  barcodeToken?: string;
   joinedAt: string;
   color: string;
   credential?: Credential;
