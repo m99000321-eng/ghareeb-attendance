@@ -193,13 +193,6 @@ export default function SubscriptionsClient({
             />
           </label>
           <a
-            href={`/api/export?type=subscriptions-template&month=${month}`}
-            className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-xs font-semibold text-white/60 transition hover:border-white/25 hover:text-white"
-          >
-            <IconDownload className="size-4" />
-            قالب Excel
-          </a>
-          <a
             href={`/api/export?type=subscriptions&month=${month}`}
             className="flex items-center gap-2 rounded-xl border border-lime/30 bg-lime/[0.08] px-4 py-2.5 text-xs font-bold text-lime transition hover:bg-lime/[0.15]"
           >
