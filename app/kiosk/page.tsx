@@ -213,7 +213,7 @@ export default function KioskPage() {
           ) : null}
 
           {status === "success" && result ? (
-            <div className="rounded-3xl border border-lime/25 bg-lime/[0.06] px-6 py-5">
+            <div className="anim-pop rounded-3xl border border-lime/25 bg-lime/[0.06] px-6 py-5">
               <div className="flex flex-wrap items-center justify-center gap-4">
                 <span
                   className="grid size-14 place-items-center rounded-2xl text-2xl font-extrabold"
@@ -247,7 +247,7 @@ export default function KioskPage() {
           ) : null}
 
           {status === "error" ? (
-            <div className="rounded-3xl border border-rose-400/25 bg-rose-500/[0.06] px-6 py-5">
+            <div className="anim-pop rounded-3xl border border-rose-400/25 bg-rose-500/[0.06] px-6 py-5">
               <p className="text-lg font-bold text-rose-200">تعذر التحقق</p>
               <p className="mx-auto mt-2 max-w-lg text-xs leading-relaxed text-rose-100/60">
                 {message}

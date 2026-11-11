@@ -106,7 +106,7 @@ export default function SubscriptionsClient({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+      <div className="anim-fade-up flex flex-col justify-between gap-5 md:flex-row md:items-end">
         <div>
           <p className="mb-2 text-[11px] font-semibold tracking-[0.2em] text-lime/80">
             MONTHLY SUBSCRIPTIONS
@@ -133,7 +133,7 @@ export default function SubscriptionsClient({
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="anim-fade-up delay-1 grid gap-4 sm:grid-cols-3">
         <div className="panel p-5">
           <p className="text-[11px] text-white/40">المطلوب</p>
           <p className="mt-2 text-2xl font-extrabold tabular-nums">{money(totals.expected)}</p>
@@ -152,7 +152,7 @@ export default function SubscriptionsClient({
         </div>
       </div>
 
-      <section className="panel overflow-hidden">
+      <section className="anim-fade-up delay-2 panel overflow-hidden">
         <div className="hidden grid-cols-[2fr_1.2fr_1fr_1fr_0.9fr] gap-3 border-b border-white/[0.05] bg-black/20 px-6 py-3 text-[10px] font-semibold tracking-wider text-white/30 md:grid">
           <span>العضو</span>
           <span>المجموعة</span>
@@ -183,7 +183,7 @@ export default function SubscriptionsClient({
 
       {toast ? (
         <div
-          className={`fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-2xl border px-5 py-3 text-sm font-semibold shadow-2xl backdrop-blur ${
+          className={`anim-toast fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-2xl border px-5 py-3 text-sm font-semibold shadow-2xl backdrop-blur ${
             toast.kind === "ok"
               ? "border-lime/40 bg-lime/15 text-lime"
               : "border-rose-400/40 bg-rose-500/15 text-rose-200"

@@ -69,7 +69,7 @@ export default async function AttendancePage({
   return (
     <Shell>
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+        <div className="anim-fade-up flex flex-col justify-between gap-5 md:flex-row md:items-end">
           <div>
             <p className="mb-2 text-[11px] font-semibold tracking-[0.2em] text-lime/80">
               ATTENDANCE LOG
@@ -83,7 +83,7 @@ export default async function AttendancePage({
           <AttendanceTools date={selected} group={group} groups={groups} rows={rows} />
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="anim-fade-up delay-1 grid gap-4 sm:grid-cols-3">
           <div className="panel flex items-center gap-4 p-5">
             <span className="grid size-11 place-items-center rounded-2xl border border-lime/25 bg-lime/10 text-lime">
               <IconCheck className="size-5" />
@@ -117,7 +117,7 @@ export default async function AttendancePage({
           </div>
         </div>
 
-        <section className="panel overflow-hidden">
+        <section className="anim-fade-up delay-2 panel overflow-hidden">
           <div className="flex items-center justify-between px-6 py-5">
             <div className="flex items-center gap-2">
               <IconCalendar className="size-5 text-white/30" />

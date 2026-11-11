@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Shell from "@/components/Shell";
 import LiveClock from "@/components/LiveClock";
+import Reveal from "@/components/Reveal";
+import CountUp from "@/components/CountUp";
 import {
   IconBell,
   IconCalendar,
@@ -27,7 +29,7 @@ function StatCard({
   accent = "lime",
 }: {
   label: string;
-  value: string | number;
+  value: React.ReactNode;
   hint: string;
   icon: React.ReactNode;
   accent?: "lime" | "gold" | "violet" | "cyan";
@@ -91,6 +93,7 @@ export default async function DashboardPage() {
   return (
     <Shell>
       <div className="flex flex-col gap-7">
+        <Reveal>
         <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
           <div>
             <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-lime/20 bg-lime/[0.06] px-3 py-1.5 text-[11px] font-semibold text-lime">
@@ -125,35 +128,44 @@ export default async function DashboardPage() {
             </Link>
           </div>
         </div>
+        </Reveal>
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <StatCard
-            label="حضور اليوم"
-            value={present}
-            hint={`${todayEntries.length} بصمة مسجلة اليوم`}
-            icon={<IconCheck className="size-5" />}
-          />
-          <StatCard
-            label="اللاعبون"
-            value={players}
-            hint="رياضيون مسجلون في الأكاديمية"
-            icon={<IconUsers className="size-5" />}
-            accent="violet"
-          />
-          <StatCard
-            label="المدربون"
-            value={coaches}
-            hint="طاقم التدريب المعتمد"
-            icon={<IconShield className="size-5" />}
-            accent="gold"
-          />
-          <StatCard
-            label="بصمات مسجلة"
-            value={enrolled}
-            hint={`${total - enrolled} عضو يحتاج تسجيل البصمة`}
-            icon={<IconFingerprint className="size-5" />}
-            accent="cyan"
-          />
+          <Reveal delay={60}>
+            <StatCard
+              label="حضور اليوم"
+              value={<CountUp value={present} />}
+              hint={`${todayEntries.length} بصمة مسجلة اليوم`}
+              icon={<IconCheck className="size-5" />}
+            />
+          </Reveal>
+          <Reveal delay={140}>
+            <StatCard
+              label="اللاعبون"
+              value={<CountUp value={players} />}
+              hint="رياضيون مسجلون في الأكاديمية"
+              icon={<IconUsers className="size-5" />}
+              accent="violet"
+            />
+          </Reveal>
+          <Reveal delay={220}>
+            <StatCard
+              label="المدربون"
+              value={<CountUp value={coaches} />}
+              hint="طاقم التدريب المعتمد"
+              icon={<IconShield className="size-5" />}
+              accent="gold"
+            />
+          </Reveal>
+          <Reveal delay={300}>
+            <StatCard
+              label="بصمات مسجلة"
+              value={<CountUp value={enrolled} />}
+              hint={`${total - enrolled} عضو يحتاج تسجيل البصمة`}
+              icon={<IconFingerprint className="size-5" />}
+              accent="cyan"
+            />
+          </Reveal>
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -182,25 +194,27 @@ export default async function DashboardPage() {
               hint: "حضور وغياب",
               icon: <IconChart className="size-4" />,
             },
-          ].map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="panel panel-hover flex items-center gap-3 px-4 py-3.5"
-            >
-              <span className="grid size-9 place-items-center rounded-xl border border-lime/20 bg-lime/[0.07] text-lime">
-                {item.icon}
-              </span>
-              <span className="min-w-0">
-                <span className="block truncate text-[13px] font-bold">{item.label}</span>
-                <span className="block text-[10px] text-white/35">{item.hint}</span>
-              </span>
-            </Link>
+          ].map((item, index) => (
+            <Reveal key={item.href} delay={index * 70}>
+              <Link
+                href={item.href}
+                className="panel panel-hover flex h-full items-center gap-3 px-4 py-3.5"
+              >
+                <span className="grid size-9 place-items-center rounded-xl border border-lime/20 bg-lime/[0.07] text-lime">
+                  {item.icon}
+                </span>
+                <span className="min-w-0">
+                  <span className="block truncate text-[13px] font-bold">{item.label}</span>
+                  <span className="block text-[10px] text-white/35">{item.hint}</span>
+                </span>
+              </Link>
+            </Reveal>
           ))}
         </div>
 
         <div className="grid gap-5 xl:grid-cols-[1.55fr_1fr]">
-          <section className="panel p-6">
+          <Reveal className="h-full">
+          <section className="panel h-full p-6">
             <div className="mb-6 flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-bold">حركة الحضور — آخر ٧ أيام</h2>
@@ -211,7 +225,7 @@ export default async function DashboardPage() {
               </span>
             </div>
             <div className="flex h-[210px] items-end gap-3 sm:gap-5">
-              {week.map((item) => (
+              {week.map((item, index) => (
                 <div key={item.key} className="group flex flex-1 flex-col items-center gap-2">
                   <span
                     className={`text-[11px] font-bold tabular-nums ${
@@ -222,12 +236,15 @@ export default async function DashboardPage() {
                   </span>
                   <div className="flex h-[160px] w-full items-end">
                     <div
-                      className={`w-full rounded-t-xl transition-all group-hover:brightness-125 ${
+                      className={`bar-rise w-full rounded-t-xl transition-all group-hover:brightness-125 ${
                         item.today
                           ? "bg-gradient-to-t from-lime/40 to-lime"
                           : "bg-gradient-to-t from-white/[0.04] to-white/20"
                       }`}
-                      style={{ height: `${Math.max(8, (item.count / maxWeek) * 100)}%` }}
+                      style={{
+                        height: `${Math.max(8, (item.count / maxWeek) * 100)}%`,
+                        animationDelay: `${index * 70}ms`,
+                      }}
                     />
                   </div>
                   <span
@@ -239,8 +256,10 @@ export default async function DashboardPage() {
               ))}
             </div>
           </section>
+          </Reveal>
 
-          <section className="panel flex flex-col p-6">
+          <Reveal delay={120} className="h-full">
+          <section className="panel flex h-full flex-col p-6">
             <div className="flex items-center gap-2 text-sm font-bold">
               <IconSpark className="size-4 text-lime" />
               حالة تسجيل البصمات
@@ -254,7 +273,9 @@ export default async function DashboardPage() {
               >
                 <div className="grid size-[104px] place-items-center rounded-full bg-[#0a0c12] text-center">
                   <div>
-                    <p className="text-2xl font-extrabold tabular-nums">{enrollRate}%</p>
+                    <p className="text-2xl font-extrabold">
+                      <CountUp value={enrollRate} suffix="%" />
+                    </p>
                     <p className="text-[10px] text-white/35">نسبة التسجيل</p>
                   </div>
                 </div>
@@ -278,8 +299,10 @@ export default async function DashboardPage() {
               إدارة بصمات الأعضاء
             </Link>
           </section>
+          </Reveal>
         </div>
 
+        <Reveal>
         <section className="panel overflow-hidden">
           <div className="flex items-center justify-between px-6 py-5">
             <div>
@@ -333,6 +356,7 @@ export default async function DashboardPage() {
             )}
           </div>
         </section>
+        </Reveal>
       </div>
     </Shell>
   );

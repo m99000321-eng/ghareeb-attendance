@@ -104,7 +104,7 @@ export default async function ReportsPage({
   return (
     <Shell>
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+        <div className="anim-fade-up flex flex-col justify-between gap-5 md:flex-row md:items-end">
           <div>
             <p className="mb-2 text-[11px] font-semibold tracking-[0.2em] text-lime/80">
               REPORTS &amp; EXPORTS
@@ -146,7 +146,7 @@ export default async function ReportsPage({
           </form>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="anim-fade-up delay-1 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <div className="panel flex items-center gap-4 p-5">
             <span className="grid size-11 place-items-center rounded-2xl border border-lime/25 bg-lime/10 text-lime">
               <IconCheck className="size-5" />
@@ -195,7 +195,7 @@ export default async function ReportsPage({
           </div>
         </div>
 
-        <section className="panel overflow-hidden">
+        <section className="anim-fade-up delay-2 panel overflow-hidden">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] px-6 py-4">
             <div>
               <h2 className="text-base font-bold">الحضور والغياب حسب العضو</h2>
@@ -254,7 +254,7 @@ export default async function ReportsPage({
           </div>
         </section>
 
-        <section className="panel overflow-hidden">
+        <section className="anim-fade-up delay-3 panel overflow-hidden">
           <div className="border-b border-white/[0.06] px-6 py-4">
             <h2 className="text-base font-bold">غائب اليوم — تواصل واتساب</h2>
             <p className="mt-1 text-[11px] text-white/35">
@@ -299,7 +299,7 @@ export default async function ReportsPage({
           </div>
         </section>
 
-        <section className="panel p-6">
+        <section className="anim-fade-up delay-4 panel p-6">
           <h2 className="text-base font-bold">تصدير البيانات إلى Excel</h2>
           <p className="mt-1 text-[11px] text-white/35">
             ملفات جاهزة بترويسات عربية — {monthLabel(month)}

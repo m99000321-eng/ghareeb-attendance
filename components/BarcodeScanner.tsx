@@ -208,7 +208,10 @@ export default function BarcodeScanner() {
           </span>
         </div>
 
-        <div className="min-h-[280px] rounded-3xl border border-white/10 bg-white/[0.02] p-6">
+        <div
+          key={result ? `ok-${result.at}` : error ? "err" : "idle"}
+          className="anim-pop min-h-[280px] rounded-3xl border border-white/10 bg-white/[0.02] p-6"
+        >
           {result ? (
             <div className="flex h-full flex-col items-center justify-center text-center">
               <span

@@ -74,7 +74,7 @@ export default function AnnouncementsClient({
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
+      <div className="anim-fade-up">
         <p className="mb-2 text-[11px] font-semibold tracking-[0.2em] text-lime/80">
           ANNOUNCEMENTS
         </p>
@@ -86,7 +86,7 @@ export default function AnnouncementsClient({
         </p>
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-[1fr_1.3fr]">
+      <div className="anim-fade-up delay-1 grid gap-5 lg:grid-cols-[1fr_1.3fr]">
         <form onSubmit={publish} className="panel flex flex-col gap-3 p-5">
           <p className="text-sm font-bold">تنبيه جديد</p>
           <select
@@ -175,7 +175,7 @@ export default function AnnouncementsClient({
 
       {toast ? (
         <div
-          className={`fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-2xl border px-5 py-3 text-sm font-semibold shadow-2xl backdrop-blur ${
+          className={`anim-toast fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-2xl border px-5 py-3 text-sm font-semibold shadow-2xl backdrop-blur ${
             toast.kind === "ok"
               ? "border-lime/40 bg-lime/15 text-lime"
               : "border-rose-400/40 bg-rose-500/15 text-rose-200"

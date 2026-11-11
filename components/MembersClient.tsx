@@ -149,7 +149,7 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+      <div className="anim-fade-up flex flex-col justify-between gap-5 md:flex-row md:items-end">
         <div>
           <p className="mb-2 text-[11px] font-semibold tracking-[0.2em] text-lime/80">
             MEMBERS & COACHES
@@ -170,7 +170,7 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
         </button>
       </div>
 
-      <div className="panel flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="anim-fade-up delay-1 panel flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:max-w-sm">
           <IconSearch className="absolute right-4 top-1/2 size-4 -translate-y-1/2 text-white/35" />
           <input
@@ -225,8 +225,12 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {filtered.map((member) => (
-            <article key={member.id} className="panel panel-hover flex flex-col p-5">
+          {filtered.map((member, index) => (
+            <article
+              key={member.id}
+              className="anim-fade-up panel panel-hover flex flex-col p-5"
+              style={{ animationDelay: `${Math.min(index, 8) * 45}ms` }}
+            >
               <div className="flex items-start gap-3">
                 <span
                   className="grid size-12 shrink-0 place-items-center rounded-2xl text-lg font-extrabold"
@@ -358,10 +362,10 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
       )}
 
       {open ? (
-        <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4 backdrop-blur-sm">
+        <div className="anim-fade fixed inset-0 z-50 grid place-items-center bg-black/70 p-4 backdrop-blur-sm">
           <form
             onSubmit={addMember}
-            className="panel w-full max-w-md p-6"
+            className="anim-pop panel w-full max-w-md p-6"
             style={{ background: "#0a0c12" }}
           >
             <div className="mb-5 flex items-center justify-between">
@@ -382,7 +386,7 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
             <input
               value={form.name}
               onChange={(event) => setForm({ ...form, name: event.target.value })}
-              placeholder="مثال: محمد أحمد"
+              placeholder="اسم العضو الكامل"
               className="mb-4 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm outline-none transition placeholder:text-white/25 focus:border-lime/50"
               required
               minLength={3}
@@ -479,7 +483,7 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
 
       {toast ? (
         <div
-          className={`fixed bottom-6 left-1/2 z-[60] flex -translate-x-1/2 items-center gap-2 rounded-2xl border px-5 py-3 text-sm font-semibold shadow-2xl backdrop-blur ${
+          className={`anim-toast fixed bottom-6 left-1/2 z-[60] flex -translate-x-1/2 items-center gap-2 rounded-2xl border px-5 py-3 text-sm font-semibold shadow-2xl backdrop-blur ${
             toast.kind === "ok"
               ? "border-lime/40 bg-lime/15 text-lime"
               : "border-rose-400/40 bg-rose-500/15 text-rose-200"

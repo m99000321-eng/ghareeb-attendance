@@ -49,7 +49,7 @@ export default async function MemberPage({
           العودة للأعضاء
         </Link>
 
-        <section className="panel overflow-hidden">
+        <section className="anim-fade-up panel overflow-hidden">
           <div className="h-24 bg-[radial-gradient(500px_160px_at_20%_0%,rgba(200,255,46,0.18),transparent_70%)]" />
           <div className="-mt-12 flex flex-col gap-5 px-6 pb-6 sm:flex-row sm:items-end sm:justify-between">
             <div className="flex items-end gap-4">
@@ -123,7 +123,7 @@ export default async function MemberPage({
           </div>
         </section>
 
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="anim-fade-up delay-1 grid gap-4 sm:grid-cols-3">
           <div className="panel p-5">
             <p className="text-[11px] text-white/40">إجمالي مرات الحضور</p>
             <p className="mt-2 text-3xl font-extrabold tabular-nums">{history.length}</p>
@@ -145,7 +145,7 @@ export default async function MemberPage({
           </div>
         </div>
 
-        <div className="grid gap-5 xl:grid-cols-[1fr_1.4fr]">
+        <div className="anim-fade-up delay-2 grid gap-5 xl:grid-cols-[1fr_1.4fr]">
           <section className="panel p-6">
             <div className="flex items-center gap-2 text-sm font-bold">
               <IconFingerprint className="size-4 text-lime" />

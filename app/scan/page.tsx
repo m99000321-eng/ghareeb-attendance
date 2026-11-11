@@ -41,7 +41,7 @@ export default function ScanPage() {
       </header>
 
       <main className="relative z-10 mx-auto max-w-6xl px-5 pb-12">
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div className="anim-fade-up mb-6 flex flex-wrap items-end justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-lime/20 bg-lime/[0.06] px-3 py-1.5 text-[11px] font-semibold text-lime">
               <IconScan className="size-4" />
