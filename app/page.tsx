@@ -207,7 +207,7 @@ export default async function DashboardPage() {
             <div className="mb-6 flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-bold">حركة الحضور — آخر ٧ أيام</h2>
-                <p className="mt-1 text-xs text-white/35">إجمالي البصمات اليومية</p>
+                <p className="mt-1 text-xs text-white/35">إجمالي عمليات الحضور اليومية</p>
               </div>
               <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[11px] text-white/45">
                 {db.attendance.length} سجل إجمالي

@@ -18,7 +18,6 @@ const items = [
   { href: "/attendance", label: "سجل الحضور", icon: IconCalendar },
   { href: "/subscriptions", label: "الاشتراكات", icon: IconWallet },
   { href: "/expenses", label: "المصروفات", icon: IconWallet },
-  { href: "/grades", label: "الدرجات والمستوى", icon: IconChart },
   { href: "/announcements", label: "التنبيهات", icon: IconBell },
   { href: "/whatsapp", label: "واتساب الأكاديمية", icon: IconWhatsApp },
   { href: "/reports", label: "التقارير", icon: IconChart },

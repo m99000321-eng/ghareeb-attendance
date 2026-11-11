@@ -1,6 +1,6 @@
 import * as XLSX from "xlsx";
 import { dayKey, getDB, timeArabic } from "@/lib/db";
-import { TIER_PRICE, monthKey, percent } from "@/lib/format";
+import { TIER_PRICE, monthKey } from "@/lib/format";
 import { denyApi, isApiAuthorized } from "@/lib/guard";
 
 export const dynamic = "force-dynamic";
@@ -82,21 +82,6 @@ export async function GET(request: Request) {
         ملاحظات: item.note ?? "",
       }));
     return workbookResponse(rows, "المصروفات", `expenses-${month || "all"}.xlsx`);
-  }
-
-  if (type === "grades") {
-    const rows = db.grades
-      .filter((item) => inMonth(item.at) && inGroup(item.memberId))
-      .map((item) => ({
-        العضو: nameOf(item.memberId),
-        المجموعة: groupOf(item.memberId),
-        الاختبار: item.title,
-        الدرجة: item.score,
-        "الدرجة النهائية": item.max,
-        النسبة: `${percent(item.score, item.max)}%`,
-        التاريخ: dayKey(item.at),
-      }));
-    return workbookResponse(rows, "الدرجات", `grades-${month || "all"}.xlsx`);
   }
 
   const rows = db.attendance

@@ -67,8 +67,8 @@ export default function LoginPage() {
                 </span>
               </h1>
               <p className="anim-fade-up delay-2 mt-3 max-w-sm text-sm leading-7 text-white/45">
-                لوحة واحدة لإدارة اللاعبين والمدربين، تسجيل الحضور، الاشتراكات، الدرجات
-                والتقارير — بدون أوراق.
+                لوحة واحدة لإدارة اللاعبين والمدربين، تسجيل الحضور، الاشتراكات والتقارير —
+                بدون أوراق.
               </p>
 
               <ul className="anim-fade-up delay-3 mt-7 space-y-3">
@@ -81,7 +81,7 @@ export default function LoginPage() {
                   {
                     icon: <IconChart className="size-4" />,
                     title: "تقارير وExcel",
-                    hint: "حضور، غياب، اشتراكات، مصروفات ودرجات.",
+                    hint: "حضور، غياب، اشتراكات ومصروفات.",
                   },
                 ].map((item) => (
                   <li key={item.title} className="flex items-start gap-3">

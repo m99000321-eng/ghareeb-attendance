@@ -305,12 +305,11 @@ export default async function ReportsPage({
             ملفات جاهزة بترويسات عربية — {monthLabel(month)}
             {group ? ` — ${group}` : ""}
           </p>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {[
               { type: "attendance", label: "سجل الحضور" },
               { type: "subscriptions", label: "الاشتراكات" },
               { type: "expenses", label: "المصروفات" },
-              { type: "grades", label: "الدرجات" },
             ].map((item) => (
               <a
                 key={item.type}
