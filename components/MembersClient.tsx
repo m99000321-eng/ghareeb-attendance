@@ -134,6 +134,7 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
       const data = (await response.json().catch(() => ({}))) as {
         error?: string;
         configured?: boolean;
+        kind?: "image" | "text";
       };
       if (!response.ok) {
         throw new Error(
@@ -142,7 +143,10 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
             : data.error ?? "تعذر إرسال الباركود",
         );
       }
-      notify("ok", `تم إرسال الباركود على واتساب ${phone}`);
+      notify(
+        "ok",
+        `${data.kind === "image" ? "تم إرسال صورة الباركود" : "تم إرسال الباركود"} على واتساب ${phone}`,
+      );
     } catch (error) {
       notify("err", (error as Error).message);
     } finally {

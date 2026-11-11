@@ -31,7 +31,9 @@ export async function POST(request: Request) {
   }
 
   const cardUrl = memberCardUrl(new URL(request.url).origin, member.barcodeToken);
-  const result = await sendWhatsApp(phone, barcodeMessage(member, cardUrl));
+  const result = await sendWhatsApp(phone, barcodeMessage(member, cardUrl), {
+    barcode: member.id,
+  });
 
   if (!result.ok) {
     return Response.json(
@@ -40,5 +42,5 @@ export async function POST(request: Request) {
     );
   }
 
-  return Response.json({ ok: true, provider: result.provider });
+  return Response.json({ ok: true, provider: result.provider, kind: result.kind });
 }

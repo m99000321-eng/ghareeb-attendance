@@ -5,8 +5,29 @@ import type { WhatsappStatus } from "./types";
 const GREEN_BASE = "https://api.green-api.com";
 
 type SendResult =
-  | { ok: true; provider: "green" | "meta" }
+  | { ok: true; provider: "green" | "meta"; kind: "image" | "text" }
   | { ok: false; configured: boolean; error: string };
+
+type SendOptions = {
+  barcode?: string;
+};
+
+async function barcodePng(value: string): Promise<Uint8Array> {
+  const bwipjs = (await import("bwip-js/node")).default;
+  const png = await bwipjs.toBuffer({
+    bcid: "code128",
+    text: value,
+    scale: 3,
+    height: 22,
+    includetext: true,
+    textxalign: "center",
+    textsize: 9,
+    paddingwidth: 14,
+    paddingheight: 14,
+    backgroundcolor: "FFFFFF",
+  });
+  return new Uint8Array(png);
+}
 
 export type GreenCreds = {
   instanceId: string;
@@ -122,7 +143,11 @@ export async function whatsappStatus(): Promise<WhatsappStatus> {
   };
 }
 
-export async function sendWhatsApp(phone: string, text: string): Promise<SendResult> {
+export async function sendWhatsApp(
+  phone: string,
+  text: string,
+  options: SendOptions = {},
+): Promise<SendResult> {
   const target = waPhone(phone);
   const green = await getGreenCreds();
   const configured = Boolean(green) || metaConfigured();
@@ -131,6 +156,29 @@ export async function sendWhatsApp(phone: string, text: string): Promise<SendRes
   }
 
   if (green) {
+    if (options.barcode) {
+      try {
+        const png = await barcodePng(options.barcode);
+        const bytes = new Uint8Array(png.length);
+        bytes.set(png);
+        const form = new FormData();
+        form.append("chatId", `${target}@c.us`);
+        form.append("file", new Blob([bytes], { type: "image/png" }), "ghareeb-card.png");
+        form.append("fileName", "ghareeb-card.png");
+        form.append("caption", text);
+        const response = await fetch(
+          `${GREEN_BASE}/waInstance${green.instanceId}/sendFileByUpload/${green.token}`,
+          { method: "POST", body: form, cache: "no-store" },
+        );
+        const data = (await response.json().catch(() => ({}))) as { idMessage?: string };
+        if (response.ok && data.idMessage) {
+          return { ok: true, provider: "green", kind: "image" };
+        }
+      } catch {
+        // Fall back to text so the member still receives the card link.
+      }
+    }
+
     try {
       const response = await fetch(
         `${GREEN_BASE}/waInstance${green.instanceId}/sendMessage/${green.token}`,
@@ -153,7 +201,7 @@ export async function sendWhatsApp(phone: string, text: string): Promise<SendRes
           error: data.message ?? data.error ?? "تعذر الإرسال من Green API",
         };
       }
-      return { ok: true, provider: "green" };
+      return { ok: true, provider: "green", kind: "text" };
     } catch {
       return { ok: false, configured: true, error: "تعذر الاتصال بـ Green API" };
     }
@@ -202,7 +250,7 @@ export async function sendWhatsApp(phone: string, text: string): Promise<SendRes
           error: data.error?.message ?? "تعذر الإرسال من WhatsApp Cloud API",
         };
       }
-      return { ok: true, provider: "meta" };
+      return { ok: true, provider: "meta", kind: "text" };
     } catch {
       return { ok: false, configured: true, error: "تعذر الاتصال بـ WhatsApp Cloud API" };
     }

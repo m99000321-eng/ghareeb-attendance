@@ -71,6 +71,7 @@ export default function MemberCard({
       const data = (await response.json().catch(() => ({}))) as {
         error?: string;
         configured?: boolean;
+        kind?: "image" | "text";
       };
       if (!response.ok) {
         throw new Error(
@@ -79,7 +80,10 @@ export default function MemberCard({
             : data.error ?? "تعذر إرسال الباركود",
         );
       }
-      setNotice({ kind: "ok", text: `تم إرسال الباركود على واتساب ${phone}` });
+      setNotice({
+        kind: "ok",
+        text: `${data.kind === "image" ? "تم إرسال صورة الباركود" : "تم إرسال الباركود"} على واتساب ${phone}`,
+      });
     } catch (error) {
       setNotice({ kind: "err", text: (error as Error).message });
     } finally {
