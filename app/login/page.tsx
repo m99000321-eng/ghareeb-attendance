@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   IconChart,
   IconCheck,
-  IconFingerprint,
   IconScan,
   IconShield,
 } from "@/components/Icons";
@@ -74,11 +73,6 @@ export default function LoginPage() {
 
               <ul className="anim-fade-up delay-3 mt-7 space-y-3">
                 {[
-                  {
-                    icon: <IconFingerprint className="size-4" />,
-                    title: "تحضير بالبصمة",
-                    hint: "تعرف تلقائي على العضو من مستشعر الإصبع.",
-                  },
                   {
                     icon: <IconScan className="size-4" />,
                     title: "باركود بكاميرا الموبايل",
@@ -168,14 +162,7 @@ export default function LoginPage() {
                 </button>
               </form>
 
-              <div className="mt-6 grid grid-cols-2 gap-2">
-                <Link
-                  href="/kiosk"
-                  className="flex items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2.5 text-[11px] font-semibold text-white/50 transition hover:border-lime/35 hover:text-lime"
-                >
-                  <IconFingerprint className="size-3.5" />
-                  شاشة البصمة
-                </Link>
+              <div className="mt-6">
                 <Link
                   href="/scan"
                   className="flex items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2.5 text-[11px] font-semibold text-white/50 transition hover:border-lime/35 hover:text-lime"

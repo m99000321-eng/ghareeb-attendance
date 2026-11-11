@@ -6,7 +6,6 @@ import {
   IconCalendar,
   IconCheck,
   IconClock,
-  IconFingerprint,
   IconScan,
   IconShield,
   IconUsers,
@@ -130,13 +129,6 @@ export default async function AttendancePage({
               >
                 <IconScan className="size-4" />
                 مسح باركود
-              </Link>
-              <Link
-                href="/kiosk"
-                className="flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-xs font-bold text-white/60 transition hover:border-white/25 hover:text-white"
-              >
-                <IconFingerprint className="size-4" />
-                شاشة البصمة
               </Link>
             </div>
           </div>

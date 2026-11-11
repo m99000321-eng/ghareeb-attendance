@@ -8,10 +8,8 @@ import {
   IconCalendar,
   IconChart,
   IconCheck,
-  IconFingerprint,
   IconScan,
   IconShield,
-  IconSpark,
   IconUsers,
   IconWallet,
 } from "@/components/Icons";
@@ -62,7 +60,6 @@ export default async function DashboardPage() {
   const total = db.members.length;
   const players = db.members.filter((member) => member.role === "player").length;
   const coaches = total - players;
-  const enrolled = db.members.filter((member) => member.credential).length;
 
   const today = todayKey();
   const todayEntries = db.attendance.filter((entry) => dayKey(entry.at) === today);
@@ -88,7 +85,6 @@ export default async function DashboardPage() {
     };
   });
   const maxWeek = Math.max(...week.map((item) => item.count), 1);
-  const enrollRate = total ? Math.round((enrolled / total) * 100) : 0;
 
   return (
     <Shell>
@@ -101,30 +97,23 @@ export default async function DashboardPage() {
                 <span className="absolute inline-flex size-full animate-ping rounded-full bg-lime opacity-70" />
                 <span className="relative inline-flex size-1.5 rounded-full bg-lime" />
               </span>
-              النظام متصل — البصمة جاهزة
+              النظام متصل — جاهز للحضور
             </div>
             <h1 className="text-[30px] font-extrabold leading-tight md:text-[38px]">
               لوحة تحكم الأكاديمية
             </h1>
             <p className="mt-2 max-w-xl text-sm leading-relaxed text-white/45">
-              متابعة حضور اللاعبين والمدربين عبر البصمة البيومترية، وإدارة تسجيل البصمات من مكان واحد.
+              متابعة حضور اللاعبين والمدربين عبر الباركود، وإدارة الأكاديمية من مكان واحد.
             </p>
           </div>
           <div className="flex items-center gap-5">
             <LiveClock />
             <Link
               href="/scan"
-              className="hidden items-center gap-2 rounded-2xl border border-lime/30 bg-lime/[0.08] px-5 py-3.5 text-sm font-bold text-lime transition hover:bg-lime/[0.15] md:flex"
+              className="hidden items-center gap-2 rounded-2xl bg-lime px-5 py-3.5 text-sm font-extrabold text-ink lime-glow transition hover:brightness-105 md:flex"
             >
               <IconScan className="size-5" />
               حضور بالباركود
-            </Link>
-            <Link
-              href="/kiosk"
-              className="hidden items-center gap-2 rounded-2xl bg-lime px-5 py-3.5 text-sm font-extrabold text-ink lime-glow transition hover:brightness-105 md:flex"
-            >
-              <IconFingerprint className="size-5" />
-              شاشة البصمة
             </Link>
           </div>
         </div>
@@ -135,7 +124,7 @@ export default async function DashboardPage() {
             <StatCard
               label="حضور اليوم"
               value={<CountUp value={present} />}
-              hint={`${todayEntries.length} بصمة مسجلة اليوم`}
+              hint={`${todayEntries.length} حضور مسجل اليوم`}
               icon={<IconCheck className="size-5" />}
             />
           </Reveal>
@@ -159,10 +148,10 @@ export default async function DashboardPage() {
           </Reveal>
           <Reveal delay={300}>
             <StatCard
-              label="بصمات مسجلة"
-              value={<CountUp value={enrolled} />}
-              hint={`${total - enrolled} عضو يحتاج تسجيل البصمة`}
-              icon={<IconFingerprint className="size-5" />}
+              label="سجلات الحضور"
+              value={<CountUp value={db.attendance.length} />}
+              hint="إجمالي عمليات الحضور المسجلة"
+              icon={<IconCalendar className="size-5" />}
               accent="cyan"
             />
           </Reveal>
@@ -212,7 +201,7 @@ export default async function DashboardPage() {
           ))}
         </div>
 
-        <div className="grid gap-5 xl:grid-cols-[1.55fr_1fr]">
+        <div className="grid gap-5">
           <Reveal className="h-full">
           <section className="panel h-full p-6">
             <div className="mb-6 flex items-center justify-between">
@@ -257,49 +246,6 @@ export default async function DashboardPage() {
             </div>
           </section>
           </Reveal>
-
-          <Reveal delay={120} className="h-full">
-          <section className="panel flex h-full flex-col p-6">
-            <div className="flex items-center gap-2 text-sm font-bold">
-              <IconSpark className="size-4 text-lime" />
-              حالة تسجيل البصمات
-            </div>
-            <div className="my-6 flex items-center justify-center gap-6">
-              <div
-                className="relative grid size-[132px] place-items-center rounded-full"
-                style={{
-                  background: `conic-gradient(#c8ff2e ${enrollRate}%, rgba(255,255,255,0.07) 0)`,
-                }}
-              >
-                <div className="grid size-[104px] place-items-center rounded-full bg-[#0a0c12] text-center">
-                  <div>
-                    <p className="text-2xl font-extrabold">
-                      <CountUp value={enrollRate} suffix="%" />
-                    </p>
-                    <p className="text-[10px] text-white/35">نسبة التسجيل</p>
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-3 text-sm">
-                <div>
-                  <p className="text-[11px] text-white/35">مسجلة بصمتهم</p>
-                  <p className="font-bold text-lime">{enrolled} عضو</p>
-                </div>
-                <div>
-                  <p className="text-[11px] text-white/35">بانتظار التسجيل</p>
-                  <p className="font-bold text-white/70">{total - enrolled} عضو</p>
-                </div>
-              </div>
-            </div>
-            <Link
-              href="/members"
-              className="mt-auto flex items-center justify-center gap-2 rounded-2xl border border-lime/25 bg-lime/[0.07] px-4 py-3 text-sm font-bold text-lime transition hover:bg-lime/[0.12]"
-            >
-              <IconFingerprint className="size-4" />
-              إدارة بصمات الأعضاء
-            </Link>
-          </section>
-          </Reveal>
         </div>
 
         <Reveal>
@@ -307,7 +253,7 @@ export default async function DashboardPage() {
           <div className="flex items-center justify-between px-6 py-5">
             <div>
               <h2 className="text-lg font-bold">آخر عمليات الحضور</h2>
-              <p className="mt-1 text-xs text-white/35">مباشر من شاشة البصمة</p>
+              <p className="mt-1 text-xs text-white/35">مباشر من عمليات الحضور</p>
             </div>
             <Link
               href="/attendance"

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import NavLinks from "./NavLinks";
-import { IconFingerprint, IconScan } from "./Icons";
+import { IconScan } from "./Icons";
 
 export default function Shell({ children }: { children: React.ReactNode }) {
   return (
@@ -27,19 +27,6 @@ export default function Shell({ children }: { children: React.ReactNode }) {
 
         <div className="mt-4 space-y-3">
           <Link
-            href="/kiosk"
-            className="flex items-center gap-3 rounded-2xl border border-lime/25 bg-lime/[0.07] px-4 py-3.5 transition hover:border-lime/50 hover:bg-lime/[0.12]"
-          >
-            <span className="grid size-10 place-items-center rounded-xl bg-lime text-ink">
-              <IconFingerprint className="size-6" />
-            </span>
-            <span>
-              <span className="block text-sm font-bold text-lime">شاشة البصمة</span>
-              <span className="block text-[11px] text-white/40">وضع الكشك — تسجيل الحضور</span>
-            </span>
-          </Link>
-
-          <Link
             href="/scan"
             className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 transition hover:border-lime/40 hover:bg-white/[0.06]"
           >
@@ -48,7 +35,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
             </span>
             <span>
               <span className="block text-sm font-bold text-white/85">الحضور بالباركود</span>
-              <span className="block text-[11px] text-white/40">كاميرا الموبايل — بدون قارئ</span>
+              <span className="block text-[11px] text-white/40">كاميرا الموبايل</span>
             </span>
           </Link>
 
@@ -75,12 +62,6 @@ export default function Shell({ children }: { children: React.ReactNode }) {
             <Link href="/" className="flex items-center gap-2">
               <img src="/brand/logo.png" alt="الغريب" className="size-9 rounded-xl object-contain" />
               <span className="text-[15px] font-extrabold">بصمة الغريب</span>
-            </Link>
-            <Link
-              href="/kiosk"
-              className="rounded-full bg-lime px-4 py-2 text-xs font-bold text-ink"
-            >
-              شاشة البصمة
             </Link>
           </div>
           <div className="px-3 pb-3">
