@@ -11,9 +11,9 @@ export default function Shell({ children }: { children: React.ReactNode }) {
             <img src="/brand/logo.png" alt="الغريب" className="size-11 object-contain" />
           </span>
           <span>
-            <span className="block text-lg font-extrabold leading-tight">بصمة الغريب</span>
+            <span className="block text-lg font-extrabold leading-tight">أكاديمية الغريب</span>
             <span className="block text-[10px] font-medium tracking-[0.22em] text-gold/80">
-              GHAREEB BIOMETRIC
+              GHAREEB ACADEMY
             </span>
           </span>
         </Link>
@@ -51,7 +51,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] px-4 py-3 text-[11px] leading-relaxed text-white/35">
             أكاديمية الغريب للفنون القتالية
             <br />
-            نظام البصمة الإصدار 1.0
+            نظام الحضور الإصدار 1.0
           </div>
         </div>
       </aside>
@@ -61,7 +61,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center justify-between px-4 py-3">
             <Link href="/" className="flex items-center gap-2">
               <img src="/brand/logo.png" alt="الغريب" className="size-9 rounded-xl object-contain" />
-              <span className="text-[15px] font-extrabold">بصمة الغريب</span>
+              <span className="text-[15px] font-extrabold">أكاديمية الغريب</span>
             </Link>
           </div>
           <div className="px-3 pb-3">

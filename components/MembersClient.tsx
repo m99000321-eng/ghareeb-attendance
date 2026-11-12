@@ -3,12 +3,11 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Role, SafeMember, Sport, Tier } from "@/lib/types";
-import { TIER_LABEL, TIER_PRICE } from "@/lib/format";
+import { GROUPS, TIER_LABEL, TIER_PRICE } from "@/lib/format";
 import {
   IconArrowLeft,
   IconCard,
   IconCheck,
-  IconFingerprint,
   IconPlus,
   IconSearch,
   IconShield,
@@ -166,7 +165,7 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
             اللاعبون والمدربون
           </h1>
           <p className="mt-2 text-sm text-white/45">
-            {members.length} عضو — {members.filter((member) => member.enrolled).length} بصمة مسجلة
+            {members.length} عضو مسجّل في الأكاديمية
           </p>
         </div>
         <button
@@ -217,7 +216,7 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
           {members.length === 0 ? (
             <>
               <p className="mt-3 text-sm text-white/40">
-                القائمة فاضية. أضف أول لاعب أو مدرب وابدأ تسجيل البصمة.
+                القائمة فاضية. أضف أول لاعب أو مدرب وابدأ تسجيل الحضور.
               </p>
               <button
                 onClick={() => setOpen(true)}
@@ -294,21 +293,14 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
                 </Link>
               </div>
 
-              <div className="mt-4 flex items-center justify-between rounded-xl border border-white/[0.06] bg-black/20 px-3 py-2">
-                <span
-                  className={`inline-flex items-center gap-1.5 text-[11px] font-semibold ${
-                    member.enrolled ? "text-lime" : "text-white/35"
-                  }`}
-                >
-                  <IconFingerprint className="size-4" />
-                  {member.enrolled ? "البصمة مسجلة" : "لا توجد بصمة"}
-                </span>
-                {member.phone ? (
-                  <span dir="ltr" className="text-[10px] tabular-nums text-white/35">
+              {member.phone ? (
+                <div className="mt-4 flex items-center justify-between rounded-xl border border-white/[0.06] bg-black/20 px-3 py-2">
+                  <span className="text-[11px] text-white/35">الهاتف</span>
+                  <span dir="ltr" className="text-[10px] tabular-nums text-white/50">
                     {member.phone}
                   </span>
-                ) : null}
-              </div>
+                </div>
+              ) : null}
 
               <div className="mt-4 flex gap-2">
                 <button
@@ -370,7 +362,7 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
             <div className="mb-5 flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-bold">إضافة عضو جديد</h2>
-                <p className="mt-1 text-xs text-white/35">أضف البيانات ثم سجّل بصمته من بطاقته</p>
+                <p className="mt-1 text-xs text-white/35">أضف البيانات وابدأ تسجيل حضوره بالباركود</p>
               </div>
               <button
                 type="button"
@@ -391,7 +383,7 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
               minLength={3}
             />
 
-            <label className="mb-1 block text-xs font-semibold text-white/55">الصفة</label>
+            <label className="mb-1 block text-xs font-semibold text-white/55">نوع العضو</label>
             <div className="mb-4 grid grid-cols-2 gap-2">
               {(["player", "coach"] as Role[]).map((value) => (
                 <button
@@ -456,14 +448,22 @@ export default function MembersClient({ initial }: { initial: SafeMember[] }) {
             <div className="mb-4 grid gap-3 sm:grid-cols-2">
               <div>
                 <label className="mb-1 block text-xs font-semibold text-white/55">
-                  المجموعة (اختياري)
+                  يوم المجموعة
                 </label>
-                <input
+                <select
                   value={form.group}
                   onChange={(event) => setForm({ ...form, group: event.target.value })}
-                  placeholder="مثال: مجموعة ٦ مساءً"
-                  className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm outline-none transition placeholder:text-white/25 focus:border-lime/50"
-                />
+                  className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm outline-none focus:border-lime/50"
+                >
+                  <option value="" className="bg-[#0a0c12]">
+                    بدون مجموعة
+                  </option>
+                  {GROUPS.map((day) => (
+                    <option key={day} value={day} className="bg-[#0a0c12]">
+                      {day}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="mb-1 block text-xs font-semibold text-white/55">

@@ -55,8 +55,8 @@ export default function LoginPage() {
                   <img src="/brand/logo.png" alt="الغريب" className="size-12 object-contain" />
                 </span>
                 <div>
-                  <p className="text-xl font-extrabold leading-tight">بصمة الغريب</p>
-                  <p className="text-[10px] tracking-[0.24em] text-gold/80">GHAREEB BIOMETRIC</p>
+                  <p className="text-xl font-extrabold leading-tight">أكاديمية الغريب</p>
+                  <p className="text-[10px] tracking-[0.24em] text-gold/80">GHAREEB ACADEMY</p>
                 </div>
               </div>
 

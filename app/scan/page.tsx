@@ -4,7 +4,7 @@ import BarcodeScanner from "@/components/BarcodeScanner";
 import { IconArrowLeft, IconScan } from "@/components/Icons";
 
 export const metadata: Metadata = {
-  title: "الحضور بالباركود | بصمة الغريب",
+  title: "الحضور بالباركود | أكاديمية الغريب",
 };
 
 export default function ScanPage() {
@@ -19,8 +19,8 @@ export default function ScanPage() {
             <img src="/brand/logo.png" alt="الغريب" className="size-11 object-contain" />
           </span>
           <div>
-            <p className="text-base font-extrabold leading-tight">بصمة الغريب</p>
-            <p className="text-[10px] tracking-[0.25em] text-gold/70">GHAREEB BIOMETRIC</p>
+            <p className="text-base font-extrabold leading-tight">أكاديمية الغريب</p>
+            <p className="text-[10px] tracking-[0.25em] text-gold/70">GHAREEB ACADEMY</p>
           </div>
         </div>
         <div className="flex items-center gap-2">

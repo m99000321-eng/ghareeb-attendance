@@ -14,7 +14,7 @@ export async function POST(request: Request) {
 
   const result = await sendWhatsApp(
     phone,
-    "رسالة من نظام بصمة الغريب — الإرسال شغال ✅",
+    "رسالة من أكاديمية الغريب — الإرسال شغال ✅",
   );
   if (!result.ok) {
     return Response.json(

@@ -110,8 +110,8 @@ export default function KioskPage() {
             <img src="/brand/logo.png" alt="الغريب" className="size-11 object-contain" />
           </span>
           <div>
-            <p className="text-base font-extrabold leading-tight">بصمة الغريب</p>
-            <p className="text-[10px] tracking-[0.25em] text-gold/70">GHAREEB BIOMETRIC</p>
+            <p className="text-base font-extrabold leading-tight">أكاديمية الغريب</p>
+            <p className="text-[10px] tracking-[0.25em] text-gold/70">GHAREEB ACADEMY</p>
           </div>
         </div>
 

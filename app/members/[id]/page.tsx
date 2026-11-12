@@ -1,14 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Shell from "@/components/Shell";
-import EnrollButton from "@/components/EnrollButton";
 import {
   IconArrowLeft,
   IconCalendar,
   IconCard,
   IconCheck,
   IconClock,
-  IconFingerprint,
   IconShield,
   IconUsers,
 } from "@/components/Icons";
@@ -145,42 +143,7 @@ export default async function MemberPage({
           </div>
         </div>
 
-        <div className="anim-fade-up delay-2 grid gap-5 xl:grid-cols-[1fr_1.4fr]">
-          <section className="panel p-6">
-            <div className="flex items-center gap-2 text-sm font-bold">
-              <IconFingerprint className="size-4 text-lime" />
-              البصمة البيومترية
-            </div>
-            <div className="my-6 flex flex-col items-center gap-3 text-center">
-              <span
-                className={`grid size-24 place-items-center rounded-full border ${
-                  member.credential
-                    ? "border-lime/40 bg-lime/[0.08] text-lime"
-                    : "border-white/10 bg-white/[0.03] text-white/25"
-                }`}
-              >
-                <IconFingerprint className="size-12" />
-              </span>
-              <p className="text-sm font-bold">
-                {member.credential ? "بصمة مسجلة ونشطة" : "لم تُسجّل البصمة بعد"}
-              </p>
-              <p className="text-[11px] leading-relaxed text-white/35">
-                {member.credential
-                  ? `تم التسجيل في ${new Date(member.credential.createdAt).toLocaleDateString("ar-EG", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}`
-                  : "سجّل بصمة العضو ليعتمد على إصبعه في تسجيل الحضور من شاشة الكشك."}
-              </p>
-            </div>
-            <EnrollButton
-              memberId={member.id}
-              memberName={member.name}
-              enrolled={Boolean(member.credential)}
-            />
-          </section>
-
+        <div className="anim-fade-up delay-2">
           <section className="panel overflow-hidden">
             <div className="flex items-center justify-between px-6 py-5">
               <div>

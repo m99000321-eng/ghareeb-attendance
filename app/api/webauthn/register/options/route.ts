@@ -16,7 +16,7 @@ export async function POST(request: Request) {
   const { rpID } = rpContext(request);
 
   const options = await generateRegistrationOptions({
-    rpName: "الغريب | نظام البصمة",
+    rpName: "أكاديمية الغريب",
     rpID,
     userID: new TextEncoder().encode(member.id),
     userName: member.phone || member.id,
