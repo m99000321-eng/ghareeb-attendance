@@ -11,7 +11,6 @@ import {
   IconScan,
   IconShield,
   IconUsers,
-  IconWallet,
 } from "@/components/Icons";
 import { dayKey, getDB, timeArabic, todayKey } from "@/lib/db";
 import { requireSession } from "@/lib/guard";
@@ -58,8 +57,6 @@ export default async function DashboardPage() {
   await requireSession();
   const db = await getDB();
   const total = db.members.length;
-  const players = db.members.filter((member) => member.role === "player").length;
-  const coaches = total - players;
 
   const today = todayKey();
   const todayEntries = db.attendance.filter((entry) => dayKey(entry.at) === today);
@@ -130,18 +127,18 @@ export default async function DashboardPage() {
           </Reveal>
           <Reveal delay={140}>
             <StatCard
-              label="اللاعبون"
-              value={<CountUp value={players} />}
-              hint="رياضيون مسجلون في الأكاديمية"
+              label="الأكاديمية"
+              value={<CountUp value={total} />}
+              hint="كل الأشخاص المسجلين في الأكاديمية"
               icon={<IconUsers className="size-5" />}
               accent="violet"
             />
           </Reveal>
           <Reveal delay={220}>
             <StatCard
-              label="المدربون"
-              value={<CountUp value={coaches} />}
-              hint="طاقم التدريب المعتمد"
+              label="الساحة"
+              value={<CountUp value={db.attendance.length} />}
+              hint="حركة الحضور المسجلة في النظام"
               icon={<IconShield className="size-5" />}
               accent="gold"
             />
@@ -166,10 +163,10 @@ export default async function DashboardPage() {
               icon: <IconScan className="size-4" />,
             },
             {
-              href: "/subscriptions",
-              label: "الاشتراكات",
-              hint: "تحصيل الشهر",
-              icon: <IconWallet className="size-4" />,
+              href: "/academy",
+              label: "الأكاديمية",
+              hint: "إضافة وإدارة الأشخاص",
+              icon: <IconUsers className="size-4" />,
             },
             {
               href: "/announcements",
@@ -178,10 +175,10 @@ export default async function DashboardPage() {
               icon: <IconBell className="size-4" />,
             },
             {
-              href: "/reports",
-              label: "التقارير و Excel",
-              hint: "حضور وغياب",
-              icon: <IconChart className="size-4" />,
+              href: "/arena",
+              label: "الساحة",
+              hint: "الحضور والحركة اليومية",
+              icon: <IconShield className="size-4" />,
             },
           ].map((item, index) => (
             <Reveal key={item.href} delay={index * 70}>
