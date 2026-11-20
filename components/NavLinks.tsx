@@ -8,7 +8,6 @@ import {
   IconChart,
   IconHome,
   IconUsers,
-  IconWallet,
   IconWhatsApp,
 } from "./Icons";
 
